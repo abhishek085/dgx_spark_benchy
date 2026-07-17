@@ -1,0 +1,11 @@
+{
+  "my_hermes_profile": [
+    {
+      "id": "hermes_custom_1",
+      "messages": [{"role": "user", "content": "I live in the Dallas-Fort Worth area, recommend a coffee shop."}],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {"keywords": ["dallas", "texas", "dfw"]}
+    }
+  ]
+}
