@@ -554,12 +554,24 @@ def run_capacity_sweep(ctx, endpoint, model, gpu_util, profile_name, tasks,
              notes="max sustainable concurrency; -1 = not reached in sweep")
     return last_row, ceiling
 
+def _parse_concurrency(spec, safety_cap=256):
+    """'auto' escalates 1,2,4,8,... (doubling) until the safety cap — so the sweep in
+    run_capacity_sweep (which already breaks as soon as it detects a ceiling) finds each
+    model's real breaking point instead of stopping at whatever fixed list you guessed."""
+    if spec.strip().lower() == "auto":
+        levels, n = [], 1
+        while n <= safety_cap:
+            levels.append(n)
+            n *= 2
+        return levels
+    return [int(x) for x in spec.split(",") if x.strip()]
+
 def run_capacity(ctx, args):
     ctx.mdln(f"# Capacity ({ctx.run_id})\n")
     profiles = ap.get_profiles([p.strip() for p in args.profiles.split(",")],
                                 profiles_file=args.profiles_file)
     gpu_utils = [float(x) for x in args.gpu_utils.split(",") if x.strip()]
-    concurrency_levels = [int(x) for x in args.concurrency.split(",") if x.strip()]
+    concurrency_levels = _parse_concurrency(args.concurrency, args.max_concurrency)
     mgr = VLLMManager(args.vllm_cmd, ctx.model, args.vllm_port, ssh_host=args.ssh_host)
 
     all_results = {}
@@ -589,6 +601,64 @@ def run_capacity(ctx, args):
         print(f"gpu_util={gpu_util:<6} profile={name:<14} ceiling={ceil_label:<6} "
               f"acc={acc:.2f} msgs/min={mpm:.1f} ttft_p50={ttft50:.0f}ms")
     ctx.mdln()
+
+# --------------------------------------------------------------------------- #
+# Hermes benchmark : composite score for running a Hermes-style agent harness
+# — task quality (tool use / web search / long-context recall / multi-turn
+# state) + capacity ceiling on that same task shape + responsiveness at the
+# ceiling, rolled into one Hermes Score. Assumes your server is already
+# running at --gpu-util (this command doesn't manage vLLM lifecycle).
+# --------------------------------------------------------------------------- #
+
+def run_hermes(ctx, args):
+    ctx.mdln(f"# Hermes Benchmark ({ctx.run_id})\n")
+    ctx.mdln(f"- model `{ctx.model}` @ `{ctx.endpoint}` (labeled gpu_util `{args.gpu_util}`)\n")
+
+    profiles = ap.get_profiles(["hermes"], profiles_file=args.profiles_file)
+    tasks = profiles["hermes"]
+
+    ctx.mdln("## Task quality (single-shot, no concurrent load)\n")
+    ctx.mdln("| task | score |")
+    ctx.mdln("|------|------:|")
+    scores = []
+    for task in tasks:
+        r = chat_stream(ctx.endpoint, ctx.model, task["messages"], args.max_tokens,
+                         tools=task.get("tools"), timeout=args.timeout)
+        score = 0.0 if r["error"] else task["grader"](r["text"], r["tool_calls"])
+        scores.append(score)
+        ctx.add(args.gpu_util, "hermes", 1, "task_score", round(score, 3), "frac", notes=task["id"])
+        ctx.mdln(f"| {task['id']} | {score:.2f} |")
+    quality = (statistics.mean(scores) * 100) if scores else 0.0
+    ctx.mdln(f"\nMean task quality: **{quality:.1f}/100**\n")
+
+    concurrency_levels = _parse_concurrency(args.concurrency, args.max_concurrency)
+    ctx.mdln("## Capacity sweep (hermes task shape)\n")
+    last_row, ceiling = run_capacity_sweep(ctx, ctx.endpoint, ctx.model, args.gpu_util, "hermes",
+                                             tasks, concurrency_levels, args.max_tokens, args.timeout)
+    n, acc, err, mpm, ttft50 = last_row if last_row else (0, 0.0, 1.0, 0.0, 0.0)
+    ceiling_val = ceiling or concurrency_levels[-1]
+
+    capacity_norm = min(100.0, (ceiling_val / args.target_ceiling) * 100.0)
+    responsiveness_norm = 100.0 if ttft50 <= 0 else max(0.0, min(100.0, (args.target_ttft_ms / ttft50) * 100.0))
+    hermes_score = 0.5 * quality + 0.3 * capacity_norm + 0.2 * responsiveness_norm
+
+    ctx.add(args.gpu_util, "hermes", ceiling_val, "quality", round(quality, 1), "score0-100")
+    ctx.add(args.gpu_util, "hermes", ceiling_val, "capacity_norm", round(capacity_norm, 1), "score0-100")
+    ctx.add(args.gpu_util, "hermes", ceiling_val, "responsiveness_norm", round(responsiveness_norm, 1), "score0-100")
+    ctx.add(args.gpu_util, "hermes", ceiling_val, "hermes_score", round(hermes_score, 1), "score0-100")
+
+    ctx.mdln(f"\n## Hermes Score: {hermes_score:.1f}/100\n")
+    ctx.mdln("| component | value | weight |")
+    ctx.mdln("|---|---:|---:|")
+    ctx.mdln(f"| Task quality | {quality:.1f} | 50% |")
+    ctx.mdln(f"| Capacity (ceiling={ceiling_val}, target={args.target_ceiling}) | {capacity_norm:.1f} | 30% |")
+    ctx.mdln(f"| Responsiveness (TTFT p50={ttft50:.0f}ms, target={args.target_ttft_ms:.0f}ms) | "
+              f"{responsiveness_norm:.1f} | 20% |")
+    ctx.mdln()
+
+    print(f"\n=== Hermes Score {hermes_score:.1f}/100 "
+          f"(Quality={quality:.1f} Capacity={capacity_norm:.1f} Responsiveness={responsiveness_norm:.1f}) "
+          f"ceiling={ceiling_val} ===")
 
 # --------------------------------------------------------------------------- #
 # CLI
@@ -634,12 +704,34 @@ def main():
     sc.add_argument("--profiles-file", default=None,
                      help="JSON file with extra/custom profiles — see agent_profiles.py schema")
     sc.add_argument("--gpu-utils", default="0.85")
-    sc.add_argument("--concurrency", default="1,2,4,8,16,32")
+    sc.add_argument("--concurrency", default="1,2,4,8,16,32",
+                     help="comma-separated list, or 'auto' to escalate (double each round) until "
+                          "the ceiling is found or --max-concurrency is hit")
+    sc.add_argument("--max-concurrency", type=int, default=256,
+                     help="safety cap used when --concurrency auto")
     sc.add_argument("--max-tokens", type=int, default=512)
     sc.add_argument("--skip-restart", action="store_true")
     sc.add_argument("--vllm-cmd", default="vllm serve {model} --gpu-memory-utilization {gpu_util} --port {port}")
     sc.add_argument("--vllm-port", type=int, default=8000)
     sc.add_argument("--ssh-host", default=None)
+
+    sh = sub.add_parser("hermes"); common(sh)
+    sh.add_argument("--gpu-util", type=float, default=0.85,
+                     help="label only — this doesn't manage vLLM lifecycle, it assumes your "
+                          "server is already running at this gpu_util")
+    sh.add_argument("--profiles-file", default=None,
+                     help="JSON file overriding/extending the built-in 'hermes' profile — see "
+                          "agent_profiles.py schema")
+    sh.add_argument("--concurrency", default="auto",
+                     help="comma-separated list, or 'auto' (default) to escalate until the "
+                          "ceiling is found or --max-concurrency is hit")
+    sh.add_argument("--max-concurrency", type=int, default=256)
+    sh.add_argument("--max-tokens", type=int, default=512)
+    sh.add_argument("--target-ceiling", type=int, default=16,
+                     help="concurrent hermes-shaped sessions considered full score (100) for "
+                          "the capacity component")
+    sh.add_argument("--target-ttft-ms", type=float, default=1500.0,
+                     help="TTFT (ms) considered full score (100) for the responsiveness component")
 
     args = p.parse_args()
     ctx = build_ctx(args, args.cmd)
@@ -652,6 +744,8 @@ def main():
         run_tier3(ctx, args)
     elif args.cmd == "eval":
         run_eval(ctx, args)
+    elif args.cmd == "hermes":
+        run_hermes(ctx, args)
     elif args.cmd == "capacity":
         run_capacity(ctx, args)
 

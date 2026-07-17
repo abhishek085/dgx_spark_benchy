@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+
+# results are local run output, not source
+results/*.csv
+results/runs/*.md
+results/artifacts/*
+!results/runs/.gitkeep
+!results/artifacts/.gitkeep
+
+# private, local-only container/model-lifecycle orchestration — not for the public repo
+# (hardcodes this box's container names, serve flags, model download lists)
+ops/

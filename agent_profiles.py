@@ -16,6 +16,12 @@ three generic profiles that cover the common shapes of agent work:
   chat_agent    — casual multi-turn conversational load with light context
                   recall. This is what a personal-assistant-style harness
                   (voice assistants, chat bots) sends.
+  hermes        — broader personal-agent harness shape: tool chains that
+                  include web_search/read_file (not just calendar/email/
+                  reminder), long-context recall inside a multi-turn agent
+                  session, and multi-turn preference/state tracking. Used
+                  by the `hermes` CLI command to compute a composite
+                  Hermes Score (quality + capacity ceiling + responsiveness).
 
 Use whichever profile(s) match your harness's actual traffic shape, or
 copy one and edit the task list to match your real prompts — that's more
@@ -47,6 +53,14 @@ RUN_TESTS_TOOL = [{"type": "function", "function": {
     "name": "run_tests", "description": "Run the test suite against a code change.",
     "parameters": {"type": "object", "properties": {"summary": {"type": "string"}},
                     "required": ["summary"]}}}]
+WEB_SEARCH_TOOL = [{"type": "function", "function": {
+    "name": "web_search", "description": "Search the web for current information.",
+    "parameters": {"type": "object", "properties": {"query": {"type": "string"}},
+                    "required": ["query"]}}}]
+READ_FILE_TOOL = [{"type": "function", "function": {
+    "name": "read_file", "description": "Read the contents of a local file.",
+    "parameters": {"type": "object", "properties": {"path": {"type": "string"}},
+                    "required": ["path"]}}}]
 
 def _has_tool(tool_calls, name):
     return any((tc.get("function", {}) or {}).get("name") == name for tc in tool_calls)
@@ -142,10 +156,111 @@ CHAT_AGENT_TASKS = [
         {"role": "user", "content": "Recommend a good weekend day trip from where I live."}]},
 ]
 
+# --------------------------------------------------------------------------- #
+# Profile: hermes (general-purpose personal-agent harness)
+#
+# Broader than `orchestrator` — mixes tool chains (including web_search and
+# read_file, not just calendar/email/reminder), long-context recall *inside*
+# a multi-turn agent session, and multi-turn preference/state tracking. This
+# is the shape used by the `hermes` CLI command to compute a composite
+# Hermes Score (task quality + capacity ceiling + responsiveness).
+# --------------------------------------------------------------------------- #
+
+def _tool_args_contain(tool_calls, name, keyword):
+    for tc in tool_calls:
+        fn = tc.get("function", {}) or {}
+        if fn.get("name") == name and keyword.lower() in fn.get("arguments", "").lower():
+            return True
+    return False
+
+def _build_context_filler(approx_tokens, fact_line, depth=0.5):
+    line = ("Meeting notes: the quarterly roadmap review covered infra migration timelines, "
+            "on-call rotation updates, and hiring targets across regional teams. ")
+    n = max(2, int(approx_tokens * 4) // len(line))
+    lines = [line] * n
+    lines[int(n * depth)] = fact_line
+    return "".join(lines)
+
+_DEPLOY_FACT = "IMPORTANT: the deployment window is Saturday 02:00-04:00 UTC. "
+_HERMES_LONG_CTX = _build_context_filler(6000, _DEPLOY_FACT)
+
+def _grade_hermes_full_chain(text, tool_calls):
+    steps = ["web_search", "read_file", "run_tests"]
+    hit = sum(1 for s in steps if _has_tool(tool_calls, s))
+    return hit / len(steps)
+
+def _grade_hermes_search_synth(text, tool_calls):
+    searched = _has_tool(tool_calls, "web_search")
+    synthesized = bool(re.search(r"\d+\.\d+", text))
+    return 0.6 * searched + 0.4 * synthesized
+
+def _grade_hermes_long_ctx_tool(text, tool_calls):
+    called = _has_tool(tool_calls, "create_reminder")
+    time_mentioned = _tool_args_contain(tool_calls, "create_reminder", "01:") or \
+        _tool_args_contain(tool_calls, "create_reminder", "1am") or \
+        _tool_args_contain(tool_calls, "create_reminder", "saturday")
+    return 0.5 * called + 0.5 * time_mentioned
+
+def _grade_hermes_preference_state(text, tool_calls):
+    used_email = _has_tool(tool_calls, "draft_email")
+    scheduled = _has_tool(tool_calls, "create_reminder") or _has_tool(tool_calls, "check_calendar")
+    return 0.6 * used_email + 0.4 * scheduled
+
+HERMES_TASKS = [
+    {"id": "hermes_full_ops_chain",
+     "tools": WEB_SEARCH_TOOL + READ_FILE_TOOL + RUN_TESTS_TOOL,
+     "grader": _grade_hermes_full_chain,
+     "messages": [{"role": "user", "content":
+        "Read the deployment checklist file, check the web for any known issues with the "
+        "library version we're on, and run the test suite before confirming we're ready to "
+        "deploy. Use the tools."}]},
+    {"id": "hermes_web_search_synthesize",
+     "tools": WEB_SEARCH_TOOL,
+     "grader": _grade_hermes_search_synth,
+     "messages": [{"role": "user", "content":
+        "What's the latest stable Python version? Use web search, then tell me the version "
+        "number in your final answer."}]},
+    {"id": "hermes_long_ctx_tool_use",
+     "tools": CALENDAR_TOOL + EMAIL_TOOL + REMINDER_TOOL,
+     "grader": _grade_hermes_long_ctx_tool,
+     "messages": [{"role": "user", "content":
+        _HERMES_LONG_CTX + "\n\nGiven the deployment window mentioned somewhere above, "
+        "create a reminder for 1 hour before it starts."}]},
+    {"id": "hermes_preference_and_state",
+     "tools": CALENDAR_TOOL + EMAIL_TOOL + REMINDER_TOOL,
+     "grader": _grade_hermes_preference_state,
+     "messages": [
+        {"role": "user", "content": "My name is Alex and I prefer email over Slack for anything urgent."},
+        {"role": "assistant", "content": "Got it, Alex — email for anything urgent."},
+        {"role": "user", "content": "I also work in the EU timezone, CET."},
+        {"role": "assistant", "content": "Noted — CET."},
+        {"role": "user", "content":
+         "Something urgent just came up with the payment service. Notify me the way I "
+         "prefer, and schedule a follow-up standup for tomorrow morning my time."}]},
+    {"id": "hermes_conditional_tool_use",
+     "tools": CALENDAR_TOOL + EMAIL_TOOL + REMINDER_TOOL,
+     "grader": lambda t, tc: (0.5 if _has_tool(tc, "check_calendar") else 0.0) +
+                              (0.5 if (_has_tool(tc, "draft_email") or _has_tool(tc, "create_reminder")) else 0.0),
+     "messages": [{"role": "user", "content":
+        "Check if I have anything on my calendar Thursday afternoon. If it's clear, draft an "
+        "email inviting the on-call rotation for a Thursday 3pm handoff review."}]},
+    {"id": "hermes_simple_ask",
+     "tools": None,
+     "grader": lambda t, tc: 1.0 if len(t.split()) > 30 else 0.4,
+     "messages": [{"role": "user", "content":
+        "Summarize the tradeoffs between synchronous and asynchronous agent tool calls in a "
+        "few sentences."}]},
+    {"id": "hermes_single_tool",
+     "tools": WEB_SEARCH_TOOL + READ_FILE_TOOL + RUN_TESTS_TOOL + CALENDAR_TOOL + EMAIL_TOOL + REMINDER_TOOL,
+     "grader": lambda t, tc: 1.0 if _has_tool(tc, "read_file") else 0.0,
+     "messages": [{"role": "user", "content": "Read config.yaml and tell me what's in it."}]},
+]
+
 PROFILES = {
     "orchestrator": ORCHESTRATOR_TASKS,
     "coding_agent": CODING_AGENT_TASKS,
     "chat_agent": CHAT_AGENT_TASKS,
+    "hermes": HERMES_TASKS,
 }
 
 # --------------------------------------------------------------------------- #
@@ -159,14 +274,45 @@ PROFILES = {
 #       "id": "task_1",
 #       "messages": [{"role": "user", "content": "..."}],
 #       "tools": null,                      // or an OpenAI-style tools array
-#       "grader_type": "keyword",           // "keyword" | "tool_sequence" | "json_valid"
+#       "grader_type": "keyword",           // "keyword" | "tool_sequence" | "json_valid" | "code_exec"
 #       "grader_args": {"keywords": ["dallas", "texas"]}
 #       // for grader_type "tool_sequence": {"tools_in_order": ["search_flights","book_flight"]}
 #       // for grader_type "json_valid": {"required_fields": ["name","age"]}
+#       // for grader_type "code_exec": {"function_name": "merge_intervals",
+#       //     "test_cases": [{"args": [[[1,3],[2,6]]], "expected": [[1,6]]}]}
+#       //   — extracts the reply's python code block, execs it, calls function_name with each
+#       //   test case's "args"/"kwargs", and scores the fraction of cases whose return value
+#       //   equals "expected". Lets generated coding tasks be graded by actually running them,
+#       //   not just keyword-matched.
 #     }
 #   ]
 # }
 # --------------------------------------------------------------------------- #
+
+def _code_exec_check(text, fn_name, test_cases):
+    m = re.search(r"```(?:python)?\s*(.*?)```", text, re.DOTALL)
+    code = m.group(1) if m else text
+    if not fn_name or fn_name not in code:
+        return 0.0
+    try:
+        ns = {}
+        exec(code, ns)
+        f = ns.get(fn_name)
+    except Exception:
+        return 0.0
+    if f is None:
+        return 0.0
+    if not test_cases:
+        return 0.3
+    passed = 0
+    for case in test_cases:
+        try:
+            result = f(*case.get("args", []), **case.get("kwargs", {}))
+            if result == case.get("expected"):
+                passed += 1
+        except Exception:
+            pass
+    return passed / len(test_cases)
 
 def _grader_from_json_spec(spec):
     gtype = spec.get("grader_type", "keyword")
@@ -197,6 +343,12 @@ def _grader_from_json_spec(spec):
             if not required:
                 return 1.0
             return sum(1 for k in required if k in obj) / len(required)
+        return g
+    if gtype == "code_exec":
+        fn_name = args.get("function_name", "")
+        cases = args.get("test_cases", [])
+        def g(text, tool_calls):
+            return _code_exec_check(text, fn_name, cases)
         return g
     raise ValueError(f"unknown grader_type: {gtype}")
 
