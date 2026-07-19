@@ -137,6 +137,22 @@ handful of hand-written examples each profile ships with — useful once you're 
 concurrency high enough that repeating a few prompts would flatter prefix-caching more than real
 varied traffic would. See `METHODOLOGY.md` and the script's own `--help` for details.
 
+## Where the benchmark data comes from
+
+Not copied from another project, and not scraped — two sources, both in this repo:
+
+- **The 22 graded `eval` scenarios** (`eval_scenarios.py`) and each workload profile's handful of
+  starter tasks (`agent_profiles.py`) are hand-written for this project. The grading *philosophy*
+  (partial credit, trial statistics) follows spark-bench's lead — credited above — but the actual
+  task content is original.
+- **The larger generated task pool** (`profiles/generated.json`, 128 tasks across 4 profiles) was
+  produced by `generate_data.py` pointed at a big model — `nvidia/NVIDIA-Nemotron-3-Super-120B-
+  A12B-NVFP4` running on this same box — asked to write realistic, varied agent-task prompts
+  matching each profile's shape. It's synthetic, not sourced from real user traffic, and it's
+  checked into the repo so anyone cloning it gets the same larger task pool without needing to
+  regenerate it (or own a model big enough to). Rerun `generate_data.py` yourself (with any model)
+  if you want a different/fresh batch — see `METHODOLOGY.md`.
+
 ## Repository structure
 
 ```

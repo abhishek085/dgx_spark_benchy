@@ -140,6 +140,45 @@ against a live server on this exact box: `eval` → `capacity` → `hermes` → 
 at and whether it's one of the models NVIDIA/Hugging Face/Unsloth specifically recommend for this
 hardware.
 
+Two more things get recorded per model run that aren't part of any single score:
+- **Load time** — how long from launching the server to it actually answering requests (weight
+  loading + CUDA graph capture + KV cache setup). The real cold-start cost of switching models.
+- **Machine telemetry** — real GPU behavior sampled every 5 seconds for the duration of the run:
+  peak/average utilization%, peak memory used, peak temperature, peak power draw. Distinct from
+  the `--gpu-memory-utilization` flag we *ask* vLLM to target — this is what actually happened.
+
+### Raw data first, presentation second
+
+Every number this project measures — every eval scenario's score, every domain's accuracy, every
+concurrency level's latency, every telemetry sample — gets written to
+`results/spark_bench_plus.csv` as its own row. Composite scores (LocalScore, Hermes Score) and
+the "Best model for..." picks on the leaderboard are all just *views* computed from that same raw
+data, not separate things that get measured separately. That split matters in practice: it means
+we can add a new leaderboard view, change how an existing score weighs its inputs, or build an
+entirely different presentation of the same models, all without re-running a single benchmark —
+`leaderboard.py` just needs to be re-run against the CSV that's already there. If you disagree
+with how a score is calculated, the fix is almost always in `leaderboard.py` or `eval_scenarios.py`,
+not in re-testing.
+
+### "Best model for..." — one composite score can't answer every question
+
+Alongside LocalScore and Hermes Score, the leaderboard picks a winner for a handful of specific
+use cases, each computed straight from the raw per-model data (see `CATEGORIES` in
+`leaderboard.py`):
+
+- **Fastest (with real answers)** — highest peak decode speed among models clearing a basic
+  quality bar (≥50/100), so "fastest" doesn't just mean "fastest at being wrong."
+- **Most accurate (that isn't painfully slow)** — highest quality score among models doing at
+  least 20 tokens/sec, so "most accurate" doesn't include something unusably slow.
+- **Best at coding** — highest exec-verified code-generation accuracy, speed not considered at all.
+- **Best at tool calling** — highest tool-use domain accuracy from the graded eval suite.
+- **Best for a Hermes-style personal agent** — highest Hermes Score (see the dedicated section).
+
+These are deliberately separate from each other — a model can win one category and rank
+unremarkably on the others. Adding, removing, or redefining a category is a small code change in
+`leaderboard.py`, not a new benchmark run, since it's just a different slice of data already on
+disk.
+
 ## What's not measured yet
 
 - **Context-handling and memory-management technique comparison.** The `speed` context probe

@@ -278,6 +278,7 @@ def run_tier2(ctx, args):
         ctx.add("na", "single_stream", "na", "ttft_ms", round(r["ttft"] * 1000, 1), "ms", context=ptoks)
         ctx.add("na", "single_stream", "na", "decode_tps", round(r["decode_tps"], 2), "tok/s", context=ptoks)
         ctx.add("na", "single_stream", "na", "tpot_ms", round(r["tpot_ms"], 2), "ms", context=ptoks)
+        ctx.add("na", "single_stream", "na", "prefill_tps", round(prefill_tps, 2), "tok/s", context=ptoks)
         ctx.mdln(f"| {ptoks} | {r['ttft']*1000:.0f} | {r['decode_tps']:.1f} | {r['tpot_ms']:.1f} | "
                   f"{prefill_tps:.0f} | {r['completion_tokens']} |")
     ctx.mdln()
@@ -412,8 +413,8 @@ def run_eval(ctx, args):
     ctx.mdln("| component | score | weight |")
     ctx.mdln("|-----------|------:|-------:|")
     ctx.mdln(f"| Quality | {ov['quality']:.1f} | 45% |")
-    ctx.mdln(f"| Reliability | {ov['reliability']:.1f} | 25% |")
-    ctx.mdln(f"| Efficiency | {ov['efficiency']:.1f} | 10% |")
+    ctx.mdln(f"| Reliability | {ov['reliability']:.1f} | 15% |")
+    ctx.mdln(f"| Efficiency | {ov['efficiency']:.1f} | 20% |")
     ctx.mdln(f"| Responsiveness | {ov['responsiveness']:.1f} | 20% |")
     ctx.mdln(f"\nMedian latency {ov['median_latency_s']:.2f}s · mean decode {ov['mean_decode_tps']:.1f} tok/s "
               f"· {ov['n_scenarios']} scenarios\n")
@@ -706,7 +707,7 @@ def main():
     se = sub.add_parser("eval"); common(se)
     se.add_argument("--repeats", type=int, default=2)
     se.add_argument("--domains", default="")
-    se.add_argument("--efficiency-target-tps", type=float, default=20.0,
+    se.add_argument("--efficiency-target-tps", type=float, default=80.0,
                      help="decode tok/s treated as fully-efficient (100 score); tune to your box")
 
     sc = sub.add_parser("capacity"); common(sc)

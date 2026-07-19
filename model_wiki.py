@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 """
 model_wiki.py — build results/MODEL_WIKI.md: a plain-language guide to which models make sense
-to run on an NVIDIA DGX Spark (GB10, 128GB unified memory), not just a score table.
+to run on an NVIDIA DGX Spark (GB10, 128GB unified memory) — what each one is actually good at,
+not just a score table, and what's still to come.
 
-Two kinds of entries:
+Three kinds of model entries:
   tested   models this box has actually benchmarked (results/spark_bench_plus.csv) — real
-           numbers pulled in via leaderboard.py, plus a curated note on whether it's one of the
-           handful of models NVIDIA/Hugging Face/Unsloth specifically calls out for GB10, or
-           just a community/self-published quant of a good family.
-  queued   models worth trying that haven't been benchmarked here yet — "coming soon", no
-           fabricated numbers, just why they're on the list.
+           numbers pulled in via leaderboard.py, a curated note on whether it's one of the
+           handful of models NVIDIA/Hugging Face/Unsloth specifically call out for GB10, and a
+           "what it's best at" writeup derived from the same raw per-domain/category data
+           leaderboard.py's "Best model for..." section uses.
+  queued   models worth trying that haven't been benchmarked here yet — auto-drops off this list
+           the moment a benchmark run actually covers it (matched against the CSV, not hardcoded
+           by hand), so this file doesn't go stale as batches complete.
+  skipped  checked and deliberately not queued (too big, wrong format, pre-2026, etc.)
 
 The curated facts below (official-recommendation status, family notes) were gathered by hand
 from NVIDIA/Hugging Face/Unsloth sources on 2026-07-18/19 — re-check before trusting them stale.
@@ -23,6 +27,7 @@ import leaderboard as lb
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_OUT = os.path.join(HERE, "results", "MODEL_WIKI.md")
+REPO_URL = "https://github.com/abhishek085/dgx_spark_benchy"
 
 # Curated per-family notes. Matched against a benchmarked entry's model name by substring, so one
 # entry covers every quant variant of a family (nvidia/unsloth/google/Qwen NVFP4 + BF16 etc).
@@ -47,19 +52,22 @@ FAMILY_NOTES = [
      "Qwen 3.5 by deepreinforce-ai, tuned for terminal-based coding agents. Added on request."),
 ]
 
-# Queued: real repo IDs, confirmed to exist via web research on 2026-07-18/19, not yet run
-# through bench-all on this box. Kept here (not just in ops/models.txt) because this file is
-# public and ops/ is gitignored — the roadmap itself is fine to share even though the container
-# internals aren't. Grouped to match ops/models.txt.
+# Queued: real repo IDs, confirmed to exist via web research, not yet run through bench-all on
+# this box. Kept here (not just in ops/models.txt) because this file is public and ops/ is
+# gitignored — the roadmap itself is fine to share even though the container internals aren't.
+# Filtered against actually-tested models at render time, so this list self-updates as batches
+# complete instead of needing to be hand-edited every run.
 QUEUED_GROUPS = [
     ("Re-testing with the fixed pipeline",
      "The rest of the original 12-model batch, queued to re-run now that the max-num-seqs "
-     "scaling, Gemma4 tool-calling, and reasoning-model token-budget fixes are in.", [
+     "scaling, Gemma4 tool-calling, context-window detection, and speed-aware scoring fixes are in.", [
         ("nvidia/Qwen3.6-27B-NVFP4", ""), ("unsloth/Qwen3.6-27B-NVFP4", ""),
         ("unsloth/Qwen3.6-35B-A3B-NVFP4", ""), ("nvidia/Gemma-4-31B-IT-NVFP4", ""),
         ("unsloth/gemma-4-31B-it-NVFP4", ""), ("unsloth/gemma-4-26B-A4B-it-NVFP4", ""),
         ("Qwen/Qwen3.6-27B", "BF16"), ("Qwen/Qwen3.6-35B-A3B", "BF16"),
         ("google/gemma-4-31B-it", "BF16"), ("google/gemma-4-26B-A4B-it", "BF16"),
+        ("nvidia/Qwen3.6-35B-A3B-NVFP4", ""), ("nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4", ""),
+        ("nvidia/Gemma-4-26B-A4B-NVFP4", ""), ("deepreinforce-ai/Ornith-1.0-35B", ""),
      ]),
     ("Smallest meaningful",
      "Gemma 4's on-device tier (2026-04) — is there any real task this box can run "
@@ -70,7 +78,7 @@ QUEUED_GROUPS = [
     ("NVIDIA's other official DGX Spark models",
      "The rest of NVIDIA's own Nemotron 3 lineup (2026-03).", [
         ("nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4", "120B total/12B active MoE, NVFP4"),
-        ("nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16", "same model as the active NVFP4 one, uncompressed"),
+        ("nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16", "same model, uncompressed"),
         ("nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8", ""),
      ]),
     ("Nemotron 3 Nano Omni",
@@ -120,6 +128,27 @@ OFFICIAL_PICKS = [
      "realistically fits a single 128GB GB10 box."),
 ]
 
+# Benchmark *types* on the roadmap, distinct from which models are queued -- new kinds of
+# measurement this project doesn't do yet at all.
+FUTURE_BENCHMARKS = [
+    ("Fine-tuning benchmarks",
+     "This box will also be used to benchmark fine-tuning workloads, not just inference: LoRA "
+     "vs. full fine-tune training throughput, memory used during training at different model "
+     "sizes/batch sizes, and how that trades off against the inference numbers already on this "
+     "leaderboard. Not built yet — planned."),
+    ("Context-handling / memory-management technique comparison",
+     "The `speed` context probe reports the largest context a model handled, but not *how* "
+     "different architectures manage that memory — KV-cache quantization, prefix-cache reuse "
+     "across conversation turns, Mamba/hybrid-attention models that scale near-linearly with "
+     "context vs. full-attention models that don't. Matters specifically for a multi-turn "
+     "agentic harness like Hermes. Planned, not built yet."),
+    ("Context × concurrency permutation testing",
+     "Right now context size and concurrent-session capacity are measured separately (a "
+     "single-stream context probe, and a fixed-small-context concurrency sweep). Testing the "
+     "actual combination — e.g. how many concurrent 32K-context sessions this box sustains, not "
+     "just how many concurrent short-prompt sessions — is on the list."),
+]
+
 
 def _match_family(model_name):
     n = (model_name or "").lower()
@@ -129,49 +158,107 @@ def _match_family(model_name):
     return None, None
 
 
+def _model_specialities(entry, all_entries):
+    wins = []
+    for title, desc, eligible, sort_key, metric_key, fmt_str in lb.CATEGORIES:
+        winner = lb.best_for_category(all_entries, (title, desc, eligible, sort_key, metric_key, fmt_str))
+        if winner is entry:
+            wins.append(title)
+    strong_domains = sorted(
+        ((d, v) for d, v in entry.get("domain_quality", {}).items() if v >= 60),
+        key=lambda dv: -dv[1]
+    )[:3]
+    return wins, strong_domains
+
+
 def render(entries):
+    tested_models = {e["model"] for e in entries if e.get("model")}
+
     lines = [
         "# DGX Spark Model Wiki\n",
         "_by the Nokast community_\n",
-        "Not a score table — a plain-language guide to which models are actually worth running "
-        "on a single NVIDIA DGX Spark (GB10, 128GB unified memory), what each one is good at, "
-        "and whether it's one of the models NVIDIA/Hugging Face/Unsloth specifically call out "
-        "for this hardware versus just a good model that happens to fit.\n",
-        "See [`results/LEADERBOARD.html`](LEADERBOARD.html) for the full score table this data "
-        "is drawn from, and the repo [README](../README.md) for how the numbers are measured.\n",
+        "A plain-language guide to which models are actually worth running on a single NVIDIA "
+        "DGX Spark (GB10, 128GB unified memory) — what each one is good at, what's still being "
+        "tested, and what's coming next. Not a score table on its own — see "
+        "[`results/LEADERBOARD.html`](LEADERBOARD.html) for the full numbers this page's "
+        "writeups are drawn from, and the repo [README](../README.md) / "
+        "[METHODOLOGY.md](../METHODOLOGY.md) for how they're measured.\n",
+        "## Want a model tested?\n",
+        f"Open an issue on [the repo]({REPO_URL}/issues) with the Hugging Face repo ID and why "
+        "you want it — or send a PR adding it to the `QUEUED_GROUPS` list in `model_wiki.py`, "
+        "which is what actually drives the \"coming soon\" section below. A few things make a "
+        "request more likely to get run soon: it should be loadable in vLLM (this project "
+        "targets vLLM specifically — GGUF-only releases and SGLang-specific ones aren't "
+        "supported yet), and it should actually fit a single box's 128GB unified memory at "
+        "whatever quantization you're asking for. Older (pre-2026) models are lower priority "
+        "but not refused outright — see the \"checked and skipped\" section for the current "
+        "cutoff reasoning.\n",
         "## Benchmarked on this box\n",
     ]
 
-    tested = [e for e in entries if e.get("model")]
+    tested = [e for e in entries if e.get("model") and e.get("status") == "complete"]
     tested.sort(key=lambda e: -(e.get("size_b") or 0))
     if not tested:
-        lines.append("_No models benchmarked yet._\n")
+        lines.append("_No models fully benchmarked yet._\n")
     for e in tested:
         title, note = _match_family(e["model"])
         size = f"{e['size_b']:.0f}B" if e.get("size_b") else "unknown size"
-        overall = e["hermes_hermes_score"] if e["hermes_hermes_score"] is not None else e["localscore"]
+        wins, strong_domains = _model_specialities(e, entries)
         lines.append(f"### {e['model']}\n")
         lines.append(f"- **Size / format:** {size}, {e.get('precision', '—')}")
-        lines.append(f"- **Fits on this box:** yes — benchmarked live at `--gpu-memory-utilization 0.85`")
         lines.append(f"- **Official recommendation status:** {note or 'No specific official GB10 endorsement found for this exact repo — same architecture family as models that do get called out, but not confirmed itself.'}")
-        lines.append(f"- **Overall score:** {lb.fmt(overall)}/100" if overall is not None else "- **Overall score:** not yet scored")
+        if wins:
+            lines.append(f"- **Best model for:** " + "; ".join(wins))
+        if strong_domains:
+            domain_s = ", ".join(f"{d} ({v:.0f}/100)" for d, v in strong_domains)
+            lines.append(f"- **Strongest graded domains:** {domain_s}")
+        lines.append(f"- **LocalScore / Hermes Score:** {lb.fmt(e['localscore'])} / {lb.fmt(e['hermes_hermes_score'])}")
         lines.append(f"- **Biggest document it handled:** {lb._fmt_context(e.get('max_context_ok'))}")
         lines.append(f"- **Best-case speed:** {lb.fmt(e.get('peak_decode_tps'), 0)} tokens/sec" if e.get('peak_decode_tps') else "- **Best-case speed:** not yet measured")
-        lines.append(f"- **Max concurrent sessions sustained:** {e.get('max_concurrent') or '—'}")
+        max_conc = e.get("max_concurrent")
+        lines.append(f"- **Max concurrent sessions sustained:** {max_conc if max_conc else '—'}")
+        if e.get("load_time_s") is not None:
+            lines.append(f"- **Load time:** {e['load_time_s']:.0f}s")
+        if e.get("peak_temp_c") is not None:
+            lines.append(f"- **Under load:** peak {e['peak_gpu_util_pct']:.0f}% GPU utilization, "
+                         f"{e['peak_temp_c']:.0f}°C, {e['peak_power_w']:.0f}W")
         tc = e["tier3_pass"].get("tool_call")
         tc_s = "works" if tc == 1.0 else ("does not work reliably" if tc == 0.0 else "not yet tested")
         lines.append(f"- **Tool calling:** {tc_s}")
         lines.append("")
 
+    in_progress = [e for e in entries if e.get("model") and e.get("status") != "complete"]
+    if in_progress:
+        lines.append("### Partial / legacy results (full re-test queued)\n")
+        for e in in_progress:
+            lines.append(f"- `{e['model']}` (label `{e['label']}`) — only has a subset of numbers "
+                         f"from before the current benchmark pipeline; treat as stale.")
+        lines.append("")
+
     lines.append("## Coming soon — queued, not yet benchmarked\n")
     lines.append("These are on the list for a future run but don't have real numbers yet — no "
-                 "scores are shown for these on purpose.\n")
+                 "scores are shown for these on purpose. This list updates itself as batches "
+                 "complete (filtered against what's actually been tested), not hand-maintained.\n")
+    any_queued = False
     for title, blurb, repos in QUEUED_GROUPS:
+        remaining = [(repo, note) for repo, note in repos if repo not in tested_models]
+        if not remaining:
+            continue
+        any_queued = True
         lines.append(f"**{title}** — {blurb}\n")
-        for repo, note in repos:
+        for repo, note in remaining:
             note_s = f" ({note})" if note else ""
             lines.append(f"- `{repo}`{note_s}")
         lines.append("")
+    if not any_queued:
+        lines.append("_Everything queued has been tested — see above, or open an issue to add more._\n")
+
+    lines.append("## Coming soon — new kinds of benchmarks, not just new models\n")
+    lines.append("Beyond just testing more models with the existing pipeline, these are new "
+                 "*kinds* of measurement planned for this project:\n")
+    for title, desc in FUTURE_BENCHMARKS:
+        lines.append(f"- **{title}** — {desc}")
+    lines.append("")
 
     lines.append("## NVIDIA's own official picks for DGX Spark / GB10\n")
     lines.append("For context — NVIDIA's own shortlist, independent of what this project has "

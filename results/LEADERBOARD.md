@@ -1,6 +1,18 @@
 # dgx_spark_benchy leaderboard
 
-_generated from `results/spark_bench_plus.csv`, 14 labeled run(s)_
+_generated from `results/spark_bench_plus.csv`, 6 labeled run(s)_
+
+## Best model for...
+
+*Different from the composite scores above on purpose -- these pick a winner for one specific thing you might care about, straight from the same raw measurements, no single number trying to represent everything at once. A model can win here and rank modestly on LocalScore/Hermes Score, or vice versa -- that's the point.*
+
+| best for... | winner | why | size |
+|---|---|---|---:|
+| **Fastest (with real answers, not just fast garbage)** | nvidia/Gemma-4-26B-A4B-NVFP4 (30 tok/s) | Highest peak decode speed among models that still cleared a basic quality bar (Quality ≥ 50/100) -- the pick when speed is what you care about most, as long as it's not getting things wrong to get there. | 26B |
+| **Most accurate (that isn't painfully slow)** | nvidia/Gemma-4-26B-A4B-NVFP4 (74/100 quality) | Highest Quality score among models still doing at least 20 tokens/sec -- the pick when correctness matters most and you just need it to not crawl. | 26B |
+| **Best at coding** | nvidia/Qwen3.6-35B-A3B-NVFP4 (100% coding accuracy) | Highest code-generation accuracy (exec-verified against test cases), speed not considered at all -- the pick for a coding assistant specifically. | 35B |
+| **Best at tool calling** | nvidia/Qwen3.6-35B-A3B-NVFP4 (83/100 tool-use quality) | Highest tool-use accuracy from the graded eval suite -- the pick for anything agentic that lives or dies on correctly calling functions. | 35B |
+| **Best for a Hermes-style personal agent** | nvidia/Gemma-4-26B-A4B-NVFP4 (75/100 Hermes Score) | Highest Hermes Score -- see the dedicated section below for the full breakdown. | 26B |
 
 ## Overall quality ranking
 
@@ -8,20 +20,12 @@ _generated from `results/spark_bench_plus.csv`, 14 labeled run(s)_
 
 | model | label | LocalScore | Quality | Reliability | Efficiency | Responsiveness | tokens/sec | last run |
 |---|---|---:|---:|---:|---:|---:|---:|---|
-| nvidia/Gemma-4-26B-A4B-NVFP4 | nvidia-gemma-4-26b-a4b-nvfp4 | 85.9 | 74.1 | 100.0 | 100.0 | 87.7 | 29.9 | 2026-07-19T01:30:41 |
-| nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4 | nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4 | 67.1 | 37.7 | 92.3 | 100.0 | 85.1 | 51.6 | 2026-07-19T02:15:45 |
-| nvidia/Qwen3.6-35B-A3B-NVFP4 | nvidia-qwen36-35b-a3b-nvfp4 | 61.8 | 47.8 | 94.2 | 100.0 | 33.4 | 1080.4 | 2026-07-19T02:05:27 |
-| deepreinforce-ai/Ornith-1.0-35B | deepreinforce-ai-ornith-10-35b | 54.1 | 43.3 | 98.3 | 100.0 | 0.0 | 24.1 | 2026-07-19T03:17:54 |
-| nvidia/Qwen3.6-27B-NVFP4 | nvidia-qwen36-27b-nvfp4 | 52.9 | 42.6 | 94.9 | 100.0 | 0.0 | 123.9 | 2026-07-19T00:25:30 |
-| nvidia/Qwen3.6-27B-NVFP4 | qwen27b-nvidia-nvfp4 | — | — | — | — | — | 682666775.5 | 2026-07-17T23:39:01 |
-| unsloth/Qwen3.6-27B-NVFP4 | qwen27b-unsloth-nvfp4 | — | — | — | — | — | 85333415.3 | 2026-07-17T23:54:02 |
-| unsloth/Qwen3.6-27B-NVFP4 | unsloth-qwen36-27b-nvfp4 | — | — | — | — | — | 88.5 | 2026-07-18T14:30:08 |
-| unsloth/Qwen3.6-35B-A3B-NVFP4 | unsloth-qwen36-35b-a3b-nvfp4 | — | — | — | — | — | 237.9 | 2026-07-18T16:28:43 |
-| nvidia/Gemma-4-31B-IT-NVFP4 | nvidia-gemma-4-31b-it-nvfp4 | — | — | — | — | — | 4.7 | 2026-07-18T16:45:34 |
-| unsloth/gemma-4-31B-it-NVFP4 | unsloth-gemma-4-31b-it-nvfp4 | — | — | — | — | — | 6.0 | 2026-07-18T17:01:10 |
-| unsloth/gemma-4-26B-A4B-it-NVFP4 | unsloth-gemma-4-26b-a4b-it-nvfp4 | — | — | — | — | — | 32.5 | 2026-07-18T17:14:25 |
-| Qwen/Qwen3.6-27B | qwen-qwen36-27b | — | — | — | — | — | 14.5 | 2026-07-18T18:21:25 |
-| google/gemma-4-31B-it | google-gemma-4-31b-it | — | — | — | — | — | 2.6 | 2026-07-18T19:16:42 |
+| nvidia/Gemma-4-26B-A4B-NVFP4 | nvidia-gemma-4-26b-a4b-nvfp4 | 73.9 | 74.1 | 100.0 | 40.1 | 87.6 | 32.0 | 2026-07-19T19:33:57 |
+| nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4 | nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4 | 64.7 | 44.1 | 94.1 | 76.7 | 77.2 | 51.5 | 2026-07-19T13:11:25 |
+| nvidia/Qwen3.6-35B-A3B-NVFP4 | nvidia-qwen36-35b-a3b-nvfp4 | 61.7 | 46.8 | 94.3 | 100.0 | 32.6 | 271.9 | 2026-07-19T12:31:16 |
+| nvidia/Gemma-4-31B-IT-NVFP4 | nvidia-gemma-4-31b-it-nvfp4 | 61.3 | 78.2 | 100.0 | 10.6 | 44.9 | 7.6 | 2026-07-19T18:31:33 |
+| unsloth/Qwen3.6-35B-A3B-NVFP4 | unsloth-qwen36-35b-a3b-nvfp4 | 60.4 | 47.7 | 92.0 | 100.0 | 25.7 | 234.1 | 2026-07-19T14:08:37 |
+| nvidia/Qwen3.6-27B-NVFP4 | nvidia-qwen36-27b-nvfp4 | 47.6 | 46.1 | 86.8 | 69.0 | 0.0 | 67.9 | 2026-07-19T16:48:19 |
 
 ## How many people can use it at once
 
@@ -29,20 +33,12 @@ _generated from `results/spark_bench_plus.csv`, 14 labeled run(s)_
 
 | model | label | tool-chain agents | coding agents | chat sessions | tool-calling works? |
 |---|---|---:|---:|---:|:---:|
-| nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4 | nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4 | 1 | 4 | 2 | ❌ |
-| deepreinforce-ai/Ornith-1.0-35B | deepreinforce-ai-ornith-10-35b | 1 | 4 | — | ❌ |
-| nvidia/Qwen3.6-27B-NVFP4 | qwen27b-nvidia-nvfp4 | — | — | — | ✅ |
-| unsloth/Qwen3.6-27B-NVFP4 | qwen27b-unsloth-nvfp4 | — | — | — | ✅ |
-| nvidia/Qwen3.6-27B-NVFP4 | nvidia-qwen36-27b-nvfp4 | — | — | — | ✅ |
-| unsloth/Qwen3.6-27B-NVFP4 | unsloth-qwen36-27b-nvfp4 | — | — | — | ✅ |
+| nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4 | nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4 | 1 | 4 | — | ❌ |
 | nvidia/Qwen3.6-35B-A3B-NVFP4 | nvidia-qwen36-35b-a3b-nvfp4 | — | 2 | — | ✅ |
-| unsloth/Qwen3.6-35B-A3B-NVFP4 | unsloth-qwen36-35b-a3b-nvfp4 | — | — | — | ✅ |
-| nvidia/Gemma-4-31B-IT-NVFP4 | nvidia-gemma-4-31b-it-nvfp4 | — | — | — | ❌ |
-| unsloth/gemma-4-31B-it-NVFP4 | unsloth-gemma-4-31b-it-nvfp4 | — | — | — | ❌ |
+| unsloth/Qwen3.6-35B-A3B-NVFP4 | unsloth-qwen36-35b-a3b-nvfp4 | — | 2 | — | ✅ |
+| nvidia/Qwen3.6-27B-NVFP4 | nvidia-qwen36-27b-nvfp4 | — | — | — | ✅ |
+| nvidia/Gemma-4-31B-IT-NVFP4 | nvidia-gemma-4-31b-it-nvfp4 | — | — | — | ✅ |
 | nvidia/Gemma-4-26B-A4B-NVFP4 | nvidia-gemma-4-26b-a4b-nvfp4 | — | 2 | — | ✅ |
-| unsloth/gemma-4-26B-A4B-it-NVFP4 | unsloth-gemma-4-26b-a4b-it-nvfp4 | — | — | — | ❌ |
-| Qwen/Qwen3.6-27B | qwen-qwen36-27b | — | — | — | ✅ |
-| google/gemma-4-31B-it | google-gemma-4-31b-it | — | — | — | ❌ |
 
 ## Hermes Benchmark — best model for a personal-agent harness
 
@@ -50,21 +46,13 @@ _generated from `results/spark_bench_plus.csv`, 14 labeled run(s)_
 
 | model | label | Hermes Score | Quality | Capacity | Responsiveness | approx size |
 |---|---|---:|---:|---:|---:|---:|
-| nvidia/Gemma-4-26B-A4B-NVFP4 | nvidia-gemma-4-26b-a4b-nvfp4 | 75.2 | 77.6 | 100.0 | 31.8 | 26B |
+| nvidia/Gemma-4-26B-A4B-NVFP4 | nvidia-gemma-4-26b-a4b-nvfp4 | 75.2 | 77.6 | 100.0 | 31.7 | 26B |
+| nvidia/Gemma-4-31B-IT-NVFP4 | nvidia-gemma-4-31b-it-nvfp4 | 71.7 | 77.6 | 100.0 | 14.4 | 31B |
 | nvidia/Qwen3.6-35B-A3B-NVFP4 | nvidia-qwen36-35b-a3b-nvfp4 | 69.0 | 77.6 | 100.0 | 1.0 | 35B |
-| nvidia/Qwen3.6-27B-NVFP4 | nvidia-qwen36-27b-nvfp4 | 66.7 | 33.3 | 100.0 | 100.0 | 27B |
-| unsloth/gemma-4-31B-it-NVFP4 | unsloth-gemma-4-31b-it-nvfp4 | 53.3 | 51.5 | 25.0 | 100.0 | 31B |
-| unsloth/gemma-4-26B-A4B-it-NVFP4 | unsloth-gemma-4-26b-a4b-it-nvfp4 | 53.3 | 51.5 | 25.0 | 100.0 | 26B |
-| google/gemma-4-31B-it | google-gemma-4-31b-it | 53.3 | 51.5 | 25.0 | 100.0 | 31B |
-| nvidia/Gemma-4-31B-IT-NVFP4 | nvidia-gemma-4-31b-it-nvfp4 | 48.0 | 48.5 | 12.5 | 100.0 | 31B |
-| nvidia/Qwen3.6-27B-NVFP4 | qwen27b-nvidia-nvfp4 | 46.8 | 33.3 | 100.0 | 0.8 | 27B |
-| unsloth/Qwen3.6-27B-NVFP4 | unsloth-qwen36-27b-nvfp4 | 44.5 | 28.8 | 100.0 | 0.8 | 27B |
-| unsloth/Qwen3.6-35B-A3B-NVFP4 | unsloth-qwen36-35b-a3b-nvfp4 | 31.2 | 28.8 | 50.0 | 8.9 | 35B |
+| unsloth/Qwen3.6-35B-A3B-NVFP4 | unsloth-qwen36-35b-a3b-nvfp4 | 69.0 | 77.6 | 100.0 | 0.9 | 35B |
+| nvidia/Qwen3.6-27B-NVFP4 | nvidia-qwen36-27b-nvfp4 | 68.9 | 77.6 | 100.0 | 0.6 | 27B |
 | nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4 | nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4 | 29.0 | 14.3 | 6.2 | 100.0 | 30B |
-| deepreinforce-ai/Ornith-1.0-35B | deepreinforce-ai-ornith-10-35b | 29.0 | 14.3 | 6.2 | 100.0 | 35B |
-| unsloth/Qwen3.6-27B-NVFP4 | qwen27b-unsloth-nvfp4 | 28.3 | 40.5 | 25.0 | 3.0 | 27B |
-| Qwen/Qwen3.6-27B | qwen-qwen36-27b | 22.9 | 30.3 | 25.0 | 1.2 | 27B |
 
 **Smallest model that's actually good enough (70+/100):** nvidia/Gemma-4-26B-A4B-NVFP4 (~26B, score 75.2) — the one to reach for if you're tight on memory.  
-**Largest model tested:** nvidia/Gemma-4-26B-A4B-NVFP4 (~26B, score 75.2) — the highest-quality option this box can run.
+**Largest model tested:** nvidia/Gemma-4-31B-IT-NVFP4 (~31B, score 71.7) — the highest-quality option this box can run.
 

@@ -327,7 +327,7 @@ _finalize_needle_scenarios()
 # --------------------------------------------------------------------------- #
 
 def run_suite(chat_fn, repeats=2, domains=None, timeout=180, max_tokens=512, progress=None,
-              artifact_dir=None, efficiency_target_tps=20.0):
+              artifact_dir=None, efficiency_target_tps=80.0):
     """chat_fn(messages, tools, max_tokens) -> {"text":..., "tool_calls":..., "ttft":...,
     "total":..., "decode_tps":...}. Returns overall stats + per-scenario + trial stats + saved
     artifact paths, mirroring spark-bench's eval output shape.
@@ -335,6 +335,12 @@ def run_suite(chat_fn, repeats=2, domains=None, timeout=180, max_tokens=512, pro
     efficiency_target_tps: decode tok/s treated as "fully efficient" (100). This is a simplified
     stand-in for spark-bench's "relative to fastest model in the run" — meaningful cross-model
     comparison needs a leaderboard of runs, not just one; tune this to your box's realistic ceiling.
+    Default raised from an initial 20 to 80 after actually having a leaderboard of runs on one
+    DGX Spark: 20 was low enough that every NVFP4-quantized model tested (24-62 tok/s) saturated
+    at 100/100 regardless of real speed differences, making the "efficiency" component blind to
+    speed entirely. 80 tok/s is a genuinely fast decode speed for a 20-40B model on this hardware
+    class -- below it, real speed differences actually move the score; a model well past it isn't
+    penalized, just capped (this is "fully efficient," not "fastest wins everything").
     """
     scenarios = [s for s in SCENARIOS if not domains or s["domain"] in domains]
     per_scenario = []
@@ -389,7 +395,11 @@ def run_suite(chat_fn, repeats=2, domains=None, timeout=180, max_tokens=512, pro
     responsiveness = max(0.0, 100 * (1 - min(median_latency / 10.0, 1.0)))
     mean_tps = statistics.mean(all_decode_tps) if all_decode_tps else 0.0
     efficiency = max(0.0, min(100.0, 100 * mean_tps / efficiency_target_tps)) if efficiency_target_tps else 0.0
-    localscore = 0.45 * quality + 0.25 * reliability + 0.10 * efficiency + 0.20 * responsiveness
+    # Reliability's weight trimmed and efficiency's raised (10% -> 20%): with only --repeats
+    # trials to measure reliability from, it has limited statistical power anyway, and speed
+    # (efficiency + responsiveness together) was underweighted relative to how much it actually
+    # matters to a real user waiting on an answer.
+    localscore = 0.45 * quality + 0.15 * reliability + 0.20 * efficiency + 0.20 * responsiveness
 
     by_domain = {}
     for s in per_scenario:

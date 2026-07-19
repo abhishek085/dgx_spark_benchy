@@ -30,10 +30,14 @@
   .rank1 td.model { color: light-dark(#0a6, #3d8); }
   .na { color: light-dark(#bbb, #555); }
   .score { font-variant-numeric: tabular-nums; }
-  table { overflow-x: auto; display: block; }
-  footer { margin-top: 2rem; font-size: 0.8rem; color: light-dark(#888, #777); }
+  table { overflow-x: auto; display: block; margin-bottom: 2.2rem; }
+  h2 { font-size: 1.1rem; margin: 0 0 0.4rem; }
+  .section-note { color: light-dark(#666, #999); font-size: 0.82rem; margin: 0 0 0.8rem; max-width: 80ch; }
+  footer { margin-top: 1rem; font-size: 0.8rem; color: light-dark(#888, #777); }
   footer a { color: inherit; }
   .byline { color: light-dark(#999, #666); font-size: 0.78rem; margin: -0.5rem 0 1rem; }
+  .status-complete { color: light-dark(#0a6, #3d8); }
+  .status-partial { color: light-dark(#b80, #db8); }
 </style>
 </head>
 <body>
@@ -42,38 +46,92 @@
 <p class="subtitle">Real numbers from actually running each model on one NVIDIA DGX Spark
 (128GB unified memory) — not vendor benchmarks. Every row below sent real requests to a real
 server and measured what happened.</p>
-<p class="meta">generated from results/spark_bench_plus.csv · 14 model(s) benchmarked · sorted by Overall Score</p>
+<p class="meta">generated from results/spark_bench_plus.csv · 6 model(s) benchmarked · sorted by completeness, then score, then most-recently tested</p>
 <div class="legend">
+  <b>Status</b> — Complete = ran the full eval+capacity+hermes+speed+checks pipeline. Partial = an older/legacy run, only has a subset of numbers; full re-test is queued (see the Model Wiki).
   <b>Format</b> — how compressed the model is (smaller = less memory, usually a little less accurate).
-  <b>Overall Score</b> — 0-100, how good this model is for a personal-agent use case (Hermes Score if tested that way, otherwise general quality score).
-  <b>Max Document Size</b> — the largest amount of text we could hand it in one go and still get a real answer back.
-  <b>Speed</b> — tokens per second at its best, i.e. how fast the words come out once it starts answering.
+  <b>LocalScore</b> — 0-100 general quality score (accuracy + reliability + efficiency + responsiveness across 22 graded tasks). Independent of Hermes Score — see below.
+  <b>Hermes Score</b> — a <i>different</i> 0-100 number specifically for "how good behind a Hermes-style personal agent": 50% real agent-task completion, 30% concurrent-session capacity, 20% responsiveness. A model can score well on one and poorly on the other (e.g. good general quality, but no tool-call parser wired up yet — see Model Wiki).
+  <b>Max Document Size</b> — the largest amount of text we actually tested it with and got a real answer back (see the note above the table — this is the tested range, not necessarily the model's true breaking point).
+  <b>Peak Speed</b> — decode tokens/sec at its best (smallest-context single-stream request).
   <b>Max Concurrent Users</b> — how many people/sessions could use it at the same time on this one box before it slowed down or started erroring.
   <b>Tool Calling</b> — whether it can reliably call functions/tools (needed for anything agentic, like web search or running code).
 </div>
+
+<h2>Best model for...</h2>
+<p class="section-note">Different from the table below on purpose — each row here picks a winner
+for one specific thing you might care about, straight from the same raw measurements, instead of
+one composite number trying to represent everything at once. A model can win a category here and
+rank modestly below, or vice versa.</p>
+<table>
+<thead><tr><th>best for...</th><th>winner</th><th>why</th><th>size</th></tr></thead>
+<tbody>
+<tr><td><b>Fastest (with real answers, not just fast garbage)</b></td><td class="model">nvidia/Gemma-4-26B-A4B-NVFP4 <span class="score">(30 tok/s)</span></td><td>Highest peak decode speed among models that still cleared a basic quality bar (Quality ≥ 50/100) -- the pick when speed is what you care about most, as long as it&#x27;s not getting things wrong to get there.</td><td>26B</td></tr>
+<tr><td><b>Most accurate (that isn&#x27;t painfully slow)</b></td><td class="model">nvidia/Gemma-4-26B-A4B-NVFP4 <span class="score">(74/100 quality)</span></td><td>Highest Quality score among models still doing at least 20 tokens/sec -- the pick when correctness matters most and you just need it to not crawl.</td><td>26B</td></tr>
+<tr><td><b>Best at coding</b></td><td class="model">nvidia/Qwen3.6-35B-A3B-NVFP4 <span class="score">(100% coding accuracy)</span></td><td>Highest code-generation accuracy (exec-verified against test cases), speed not considered at all -- the pick for a coding assistant specifically.</td><td>35B</td></tr>
+<tr><td><b>Best at tool calling</b></td><td class="model">nvidia/Qwen3.6-35B-A3B-NVFP4 <span class="score">(83/100 tool-use quality)</span></td><td>Highest tool-use accuracy from the graded eval suite -- the pick for anything agentic that lives or dies on correctly calling functions.</td><td>35B</td></tr>
+<tr><td><b>Best for a Hermes-style personal agent</b></td><td class="model">nvidia/Gemma-4-26B-A4B-NVFP4 <span class="score">(75/100 Hermes Score)</span></td><td>Highest Hermes Score -- see the dedicated section below for the full breakdown.</td><td>26B</td></tr>
+</tbody>
+</table>
+
+<h2>Full leaderboard</h2>
 <table>
 <thead><tr>
-  <th>model</th><th>label</th><th>size</th><th>format</th><th>Overall&nbsp;Score</th>
-  <th>Max&nbsp;Document&nbsp;Size</th><th>Speed&nbsp;(tok/s)</th><th>Max&nbsp;Concurrent&nbsp;Users</th>
+  <th>model</th><th>label</th><th>status</th><th>size</th><th>format</th>
+  <th>LocalScore</th><th>Hermes&nbsp;Score</th>
+  <th>Max&nbsp;Document&nbsp;Size</th><th>Peak&nbsp;Speed&nbsp;(tok/s)</th><th>Max&nbsp;Concurrent&nbsp;Users</th>
   <th>Tool&nbsp;Calling</th><th>last tested</th>
 </tr></thead>
 <tbody>
-<tr class="rank1"><td class="model">nvidia/Gemma-4-26B-A4B-NVFP4</td><td>nvidia-gemma-4-26b-a4b-nvfp4</td><td>26B</td><td>NVFP4 (4-bit)</td><td><span class="score">75.2</span></td><td>16K tokens</td><td><span class="score">30</span></td><td>2</td><td>✅</td><td>2026-07-19</td></tr>
-<tr><td class="model">nvidia/Qwen3.6-35B-A3B-NVFP4</td><td>nvidia-qwen36-35b-a3b-nvfp4</td><td>35B</td><td>NVFP4 (4-bit)</td><td><span class="score">69.0</span></td><td>15K tokens</td><td><span class="score">62</span></td><td>2</td><td>✅</td><td>2026-07-19</td></tr>
-<tr><td class="model">nvidia/Qwen3.6-27B-NVFP4</td><td>nvidia-qwen36-27b-nvfp4</td><td>27B</td><td>NVFP4 (4-bit)</td><td><span class="score">66.7</span></td><td>—</td><td><span class="na">—</span></td><td>32</td><td>✅</td><td>2026-07-19</td></tr>
-<tr><td class="model">unsloth/gemma-4-31B-it-NVFP4</td><td>unsloth-gemma-4-31b-it-nvfp4</td><td>31B</td><td>NVFP4 (4-bit)</td><td><span class="score">53.3</span></td><td>—</td><td><span class="na">—</span></td><td>4</td><td>❌</td><td>2026-07-18</td></tr>
-<tr><td class="model">unsloth/gemma-4-26B-A4B-it-NVFP4</td><td>unsloth-gemma-4-26b-a4b-it-nvfp4</td><td>26B</td><td>NVFP4 (4-bit)</td><td><span class="score">53.3</span></td><td>—</td><td><span class="na">—</span></td><td>4</td><td>❌</td><td>2026-07-18</td></tr>
-<tr><td class="model">google/gemma-4-31B-it</td><td>google-gemma-4-31b-it</td><td>31B</td><td>BF16 (full size)</td><td><span class="score">53.3</span></td><td>—</td><td><span class="na">—</span></td><td>4</td><td>❌</td><td>2026-07-18</td></tr>
-<tr><td class="model">nvidia/Gemma-4-31B-IT-NVFP4</td><td>nvidia-gemma-4-31b-it-nvfp4</td><td>31B</td><td>NVFP4 (4-bit)</td><td><span class="score">48.0</span></td><td>—</td><td><span class="na">—</span></td><td>2</td><td>❌</td><td>2026-07-18</td></tr>
-<tr><td class="model">nvidia/Qwen3.6-27B-NVFP4</td><td>qwen27b-nvidia-nvfp4</td><td>27B</td><td>NVFP4 (4-bit)</td><td><span class="score">46.8</span></td><td>—</td><td><span class="na">—</span></td><td>128</td><td>✅</td><td>2026-07-17</td></tr>
-<tr><td class="model">unsloth/Qwen3.6-27B-NVFP4</td><td>unsloth-qwen36-27b-nvfp4</td><td>27B</td><td>NVFP4 (4-bit)</td><td><span class="score">44.5</span></td><td>—</td><td><span class="na">—</span></td><td><span class="na">—</span></td><td>✅</td><td>2026-07-18</td></tr>
-<tr><td class="model">unsloth/Qwen3.6-35B-A3B-NVFP4</td><td>unsloth-qwen36-35b-a3b-nvfp4</td><td>35B</td><td>NVFP4 (4-bit)</td><td><span class="score">31.2</span></td><td>—</td><td><span class="na">—</span></td><td>8</td><td>✅</td><td>2026-07-18</td></tr>
-<tr><td class="model">nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4</td><td>nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4</td><td>30B</td><td>NVFP4 (4-bit)</td><td><span class="score">29.0</span></td><td>66K tokens</td><td><span class="score">61</span></td><td>4</td><td>❌</td><td>2026-07-19</td></tr>
-<tr><td class="model">deepreinforce-ai/Ornith-1.0-35B</td><td>deepreinforce-ai-ornith-10-35b</td><td>35B</td><td>BF16 (full size)</td><td><span class="score">29.0</span></td><td>15K tokens</td><td><span class="score">30</span></td><td>4</td><td>❌</td><td>2026-07-19</td></tr>
-<tr><td class="model">unsloth/Qwen3.6-27B-NVFP4</td><td>qwen27b-unsloth-nvfp4</td><td>27B</td><td>NVFP4 (4-bit)</td><td><span class="score">28.3</span></td><td>—</td><td><span class="na">—</span></td><td>4</td><td>✅</td><td>2026-07-17</td></tr>
-<tr><td class="model">Qwen/Qwen3.6-27B</td><td>qwen-qwen36-27b</td><td>27B</td><td>BF16 (full size)</td><td><span class="score">22.9</span></td><td>—</td><td><span class="na">—</span></td><td>4</td><td>✅</td><td>2026-07-18</td></tr>
+<tr class="rank1"><td class="model">nvidia/Gemma-4-26B-A4B-NVFP4</td><td>nvidia-gemma-4-26b-a4b-nvfp4</td><td><span class="status-complete">complete</span></td><td>26B</td><td>NVFP4 (4-bit)</td><td><span class="score">73.9</span></td><td><span class="score">75.2</span></td><td>129K tokens</td><td><span class="score">30</span></td><td>2</td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">nvidia/Gemma-4-31B-IT-NVFP4</td><td>nvidia-gemma-4-31b-it-nvfp4</td><td><span class="status-complete">complete</span></td><td>31B</td><td>NVFP4 (4-bit)</td><td><span class="score">61.3</span></td><td><span class="score">71.7</span></td><td>64K tokens</td><td><span class="score">7</span></td><td><span class="na">—</span></td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">unsloth/Qwen3.6-35B-A3B-NVFP4</td><td>unsloth-qwen36-35b-a3b-nvfp4</td><td><span class="status-complete">complete</span></td><td>35B</td><td>NVFP4 (4-bit)</td><td><span class="score">60.4</span></td><td><span class="score">69.0</span></td><td>124K tokens</td><td><span class="score">58</span></td><td>2</td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">nvidia/Qwen3.6-35B-A3B-NVFP4</td><td>nvidia-qwen36-35b-a3b-nvfp4</td><td><span class="status-complete">complete</span></td><td>35B</td><td>NVFP4 (4-bit)</td><td><span class="score">61.7</span></td><td><span class="score">69.0</span></td><td>124K tokens</td><td><span class="score">59</span></td><td>2</td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">nvidia/Qwen3.6-27B-NVFP4</td><td>nvidia-qwen36-27b-nvfp4</td><td><span class="status-complete">complete</span></td><td>27B</td><td>NVFP4 (4-bit)</td><td><span class="score">47.6</span></td><td><span class="score">68.9</span></td><td>124K tokens</td><td><span class="score">10</span></td><td>256</td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4</td><td>nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4</td><td><span class="status-complete">complete</span></td><td>30B</td><td>NVFP4 (4-bit)</td><td><span class="score">64.7</span></td><td><span class="score">29.0</span></td><td>133K tokens</td><td><span class="score">61</span></td><td>4</td><td>❌</td><td>2026-07-19</td></tr>
 </tbody>
 </table>
+
+<h2>Detailed inference performance</h2>
+<p class="section-note">The numbers behind "Peak Speed" — best-case single-stream timing at the
+smallest context tested, plus the GPU memory budget each model was actually served at. TTFT =
+time to first token, TPOT = time per output token (decode latency), prefill = how fast it reads
+the prompt before answering.</p>
+<table>
+<thead><tr>
+  <th>model</th><th>label</th><th>GPU&nbsp;util&nbsp;used</th><th>Load&nbsp;time</th><th>TTFT&nbsp;(ms)</th>
+  <th>Prefill&nbsp;(tok/s)</th><th>Decode&nbsp;peak&nbsp;(tok/s)</th><th>TPOT&nbsp;(ms)</th>
+</tr></thead>
+<tbody>
+<tr><td class="model">nvidia/Gemma-4-26B-A4B-NVFP4</td><td>nvidia-gemma-4-26b-a4b-nvfp4</td><td>0.90</td><td><span class="score">342s</span></td><td><span class="score">736</span></td><td><span class="score">5630</span></td><td><span class="score">30</span></td><td><span class="score">34</span></td></tr>
+<tr><td class="model">nvidia/Gemma-4-31B-IT-NVFP4</td><td>nvidia-gemma-4-31b-it-nvfp4</td><td>0.90</td><td><span class="score">715s</span></td><td><span class="score">2601</span></td><td><span class="score">1593</span></td><td><span class="score">7</span></td><td><span class="score">148</span></td></tr>
+<tr><td class="model">unsloth/Qwen3.6-35B-A3B-NVFP4</td><td>unsloth-qwen36-35b-a3b-nvfp4</td><td>0.90</td><td><span class="score">202s</span></td><td><span class="score">4436</span></td><td><span class="score">4540</span></td><td><span class="score">58</span></td><td><span class="score">17</span></td></tr>
+<tr><td class="model">nvidia/Qwen3.6-35B-A3B-NVFP4</td><td>nvidia-qwen36-35b-a3b-nvfp4</td><td>0.90</td><td><span class="na">—</span></td><td><span class="score">4322</span></td><td><span class="score">4630</span></td><td><span class="score">59</span></td><td><span class="score">17</span></td></tr>
+<tr><td class="model">nvidia/Qwen3.6-27B-NVFP4</td><td>nvidia-qwen36-27b-nvfp4</td><td>0.90</td><td><span class="score">272s</span></td><td><span class="score">24645</span></td><td><span class="score">995</span></td><td><span class="score">10</span></td><td><span class="score">97</span></td></tr>
+<tr><td class="model">nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4</td><td>nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4</td><td>0.90</td><td><span class="score">262s</span></td><td><span class="score">622</span></td><td><span class="score">10091</span></td><td><span class="score">61</span></td><td><span class="score">17</span></td></tr>
+</tbody>
+</table>
+
+<h2>Machine telemetry</h2>
+<p class="section-note">Real GPU behavior sampled every 5s for the duration of each model's
+benchmark run (not the box's own hermes-vllm production traffic) — how hot, how loaded, and how
+much memory it actually used, versus the --gpu-memory-utilization flag we asked vLLM to target.
+Only present for runs after telemetry capture was added; older runs show —.</p>
+<table>
+<thead><tr>
+  <th>model</th><th>label</th><th>Peak&nbsp;GPU&nbsp;util</th><th>Avg&nbsp;GPU&nbsp;util</th>
+  <th>Peak&nbsp;memory&nbsp;used</th><th>Peak&nbsp;temp</th><th>Peak&nbsp;power</th>
+</tr></thead>
+<tbody>
+<tr><td class="model">nvidia/Gemma-4-26B-A4B-NVFP4</td><td>nvidia-gemma-4-26b-a4b-nvfp4</td><td><span class="score">96%</span></td><td><span class="score">95%</span></td><td><span class="na">—</span></td><td><span class="score">74°C</span></td><td><span class="score">64W</span></td></tr>
+<tr><td class="model">nvidia/Gemma-4-31B-IT-NVFP4</td><td>nvidia-gemma-4-31b-it-nvfp4</td><td><span class="score">96%</span></td><td><span class="score">96%</span></td><td><span class="na">—</span></td><td><span class="score">77°C</span></td><td><span class="score">79W</span></td></tr>
+<tr><td class="model">unsloth/Qwen3.6-35B-A3B-NVFP4</td><td>unsloth-qwen36-35b-a3b-nvfp4</td><td><span class="score">96%</span></td><td><span class="score">96%</span></td><td><span class="na">—</span></td><td><span class="score">74°C</span></td><td><span class="score">78W</span></td></tr>
+<tr><td class="model">nvidia/Qwen3.6-35B-A3B-NVFP4</td><td>nvidia-qwen36-35b-a3b-nvfp4</td><td><span class="na">—</span></td><td><span class="na">—</span></td><td><span class="na">—</span></td><td><span class="na">—</span></td><td><span class="na">—</span></td></tr>
+<tr><td class="model">nvidia/Qwen3.6-27B-NVFP4</td><td>nvidia-qwen36-27b-nvfp4</td><td><span class="score">96%</span></td><td><span class="score">96%</span></td><td><span class="na">—</span></td><td><span class="score">82°C</span></td><td><span class="score">91W</span></td></tr>
+<tr><td class="model">nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4</td><td>nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4</td><td><span class="score">96%</span></td><td><span class="score">93%</span></td><td><span class="na">—</span></td><td><span class="score">81°C</span></td><td><span class="score">88W</span></td></tr>
+</tbody>
+</table>
+
 <footer>See the <a href="MODEL_WIKI.md">Model Wiki</a> for which models are officially recommended
 for DGX Spark / GB10 and what each one is actually good at, and the repo README for methodology.</footer>
 </body>
