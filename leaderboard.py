@@ -383,108 +383,267 @@ HTML_TEMPLATE = """<!doctype html>
 <title>dgx_spark_benchy leaderboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  :root {{ color-scheme: light dark; }}
-  body {{
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    max-width: 1150px; margin: 2rem auto; padding: 0 1rem;
-    background: light-dark(#fafafa, #14161a); color: light-dark(#1a1a1a, #e8e8e8);
+  .viz-root {{
+    color-scheme: light;
+    --page:        #f9f9f7;
+    --surface-1:   #fcfcfb;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --border:      rgba(11,11,11,0.10);
+    --gridline:    #e1e0d9;
+    --series-1:    #2a78d6;
+    --series-1-wash: #eaf1fb;
+    --good:        #0ca30c;
+    --good-wash:   #e8f7e8;
+    --warning:     #b8790a;
+    --warning-wash:#fdf2e0;
   }}
-  h1 {{ font-size: 1.5rem; margin-bottom: 0.3rem; }}
-  .subtitle {{ color: light-dark(#555, #aaa); font-size: 0.95rem; margin: 0 0 1rem; max-width: 70ch; }}
-  .meta {{ color: light-dark(#888, #777); font-size: 0.8rem; margin-bottom: 1rem; }}
-  .legend {{
-    background: light-dark(#f0f0f0, #1c1e23); border-radius: 8px; padding: 0.8rem 1.1rem;
-    font-size: 0.82rem; color: light-dark(#444, #bbb); margin-bottom: 1.5rem; line-height: 1.7;
+  @media (prefers-color-scheme: dark) {{
+    :root:where(:not([data-theme="light"])) .viz-root {{
+      color-scheme: dark;
+      --page:        #0d0d0d;
+      --surface-1:   #17181b;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #8b8a84;
+      --border:      rgba(255,255,255,0.10);
+      --gridline:    #2c2c2a;
+      --series-1:    #3987e5;
+      --series-1-wash: #1a2634;
+      --good:        #0ca30c;
+      --good-wash:   #12271a;
+      --warning:     #d9a441;
+      --warning-wash:#2b2213;
+    }}
   }}
-  .legend b {{ color: light-dark(#1a1a1a, #e8e8e8); }}
-  table {{ width: 100%; border-collapse: collapse; font-size: 0.87rem; }}
-  th, td {{ text-align: right; padding: 0.55rem 0.7rem; border-bottom: 1px solid light-dark(#ddd, #333); }}
-  th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) {{ text-align: left; }}
-  th {{ font-weight: 600; color: light-dark(#444, #bbb); border-bottom: 2px solid light-dark(#ccc, #444);
-       position: sticky; top: 0; background: light-dark(#fafafa, #14161a); }}
-  tr:hover {{ background: light-dark(#f0f0f0, #1f2228); }}
-  td.model {{ font-family: ui-monospace, monospace; font-size: 0.8rem; }}
-  .rank1 {{ font-weight: 700; }}
-  .rank1 td.model {{ color: light-dark(#0a6, #3d8); }}
-  .na {{ color: light-dark(#bbb, #555); }}
-  .score {{ font-variant-numeric: tabular-nums; }}
-  table {{ overflow-x: auto; display: block; margin-bottom: 2.2rem; }}
-  h2 {{ font-size: 1.1rem; margin: 0 0 0.4rem; }}
-  .section-note {{ color: light-dark(#666, #999); font-size: 0.82rem; margin: 0 0 0.8rem; max-width: 80ch; }}
-  footer {{ margin-top: 1rem; font-size: 0.8rem; color: light-dark(#888, #777); }}
-  footer a {{ color: inherit; }}
-  .byline {{ color: light-dark(#999, #666); font-size: 0.78rem; margin: -0.5rem 0 1rem; }}
-  .status-complete {{ color: light-dark(#0a6, #3d8); }}
-  .status-partial {{ color: light-dark(#b80, #db8); }}
+  :root[data-theme="dark"] .viz-root {{
+    color-scheme: dark;
+    --page:        #0d0d0d;
+    --surface-1:   #17181b;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #8b8a84;
+    --border:      rgba(255,255,255,0.10);
+    --gridline:    #2c2c2a;
+    --series-1:    #3987e5;
+    --series-1-wash: #1a2634;
+    --good:        #0ca30c;
+    --good-wash:   #12271a;
+    --warning:     #d9a441;
+    --warning-wash:#2b2213;
+  }}
+  * {{ box-sizing: border-box; }}
+  body {{ margin: 0; }}
+  .viz-root {{
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page); color: var(--text-primary);
+  }}
+  .wrap {{ max-width: 1180px; margin: 0 auto; padding: 0 1.25rem 3rem; }}
+  header.hero {{ padding: 2.4rem 0 1.4rem; }}
+  h1 {{ font-size: 1.65rem; font-weight: 700; margin: 0 0 0.25rem; letter-spacing: -0.01em; }}
+  .byline {{ color: var(--text-muted); font-size: 0.8rem; margin: 0 0 0.9rem; }}
+  .subtitle {{ color: var(--text-secondary); font-size: 0.98rem; margin: 0 0 0.5rem; max-width: 70ch; line-height: 1.5; }}
+  .meta {{ color: var(--text-muted); font-size: 0.8rem; margin: 0 0 1.6rem; }}
+
+  nav.pagenav {{
+    position: sticky; top: 0; z-index: 10; background: var(--page);
+    border-bottom: 1px solid var(--border); padding: 0.7rem 0; margin-bottom: 1.8rem;
+    display: flex; gap: 1.4rem; overflow-x: auto; white-space: nowrap;
+  }}
+  nav.pagenav a {{
+    color: var(--text-secondary); text-decoration: none; font-size: 0.82rem; font-weight: 500;
+  }}
+  nav.pagenav a:hover {{ color: var(--series-1); }}
+
+  .stat-row {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.9rem; margin-bottom: 2.2rem; }}
+  .stat-tile {{
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1rem 1.2rem;
+  }}
+  .stat-tile .label {{ color: var(--text-muted); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 0.4rem; }}
+  .stat-tile .value {{ font-size: 1.3rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 0 0 0.15rem; }}
+  .stat-tile .sub {{ color: var(--text-secondary); font-size: 0.8rem; font-family: ui-monospace, monospace; }}
+
+  section.card {{
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.4rem 1.5rem 0.6rem; margin-bottom: 1.6rem; scroll-margin-top: 3.5rem;
+  }}
+  h2 {{ font-size: 1.05rem; font-weight: 600; margin: 0 0 0.45rem; }}
+  .section-note {{ color: var(--text-secondary); font-size: 0.83rem; margin: 0 0 1rem; max-width: 85ch; line-height: 1.55; }}
+  .section-note code {{ background: var(--series-1-wash); color: var(--series-1); padding: 0.05rem 0.35rem; border-radius: 4px; font-size: 0.85em; }}
+
+  .table-scroll {{ overflow-x: auto; margin: 0 -0.1rem 1.2rem; }}
+  table {{ width: 100%; border-collapse: collapse; font-size: 0.85rem; }}
+  th, td {{ text-align: right; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--gridline); white-space: nowrap; }}
+  th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) {{ text-align: left; white-space: normal; }}
+  td.wrap {{ text-align: left; white-space: normal; min-width: 28ch; }}
+  th {{
+    font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em;
+    color: var(--text-muted); border-bottom: 1px solid var(--border);
+  }}
+  tbody tr:last-child td {{ border-bottom: none; }}
+  tbody tr:hover td {{ background: var(--series-1-wash); }}
+  td.model {{ font-family: ui-monospace, monospace; font-size: 0.78rem; color: var(--text-primary); }}
+  .rank1 td {{ background: var(--series-1-wash); }}
+  .rank1 td.model {{ color: var(--series-1); font-weight: 700; }}
+  .na {{ color: var(--text-muted); }}
+  .score {{ font-variant-numeric: tabular-nums; font-weight: 600; }}
+
+  .pill {{
+    display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.15rem 0.55rem;
+    border-radius: 999px; font-size: 0.74rem; font-weight: 600; white-space: nowrap;
+  }}
+  .pill-good {{ background: var(--good-wash); color: var(--good); }}
+  .pill-warning {{ background: var(--warning-wash); color: var(--warning); }}
+  .pill::before {{ content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }}
+
+  footer {{ margin-top: 1rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text-muted); }}
+  footer a {{ color: var(--series-1); }}
 </style>
 </head>
 <body>
+<div class="viz-root">
+<div class="wrap">
+<header class="hero">
 <h1>dgx_spark_benchy leaderboard</h1>
 <p class="byline">by the Nokast community</p>
 <p class="subtitle">Real numbers from actually running each model on one NVIDIA DGX Spark
 (128GB unified memory) — not vendor benchmarks. Every row below sent real requests to a real
 server and measured what happened.</p>
 <p class="meta">generated from {csv_name} · {n} model(s) benchmarked · sorted by completeness, then score, then most-recently tested</p>
-<div class="legend">
-  <b>Status</b> — Complete = ran the full eval+capacity+hermes+speed+checks pipeline. Partial = an older/legacy run, only has a subset of numbers; full re-test is queued (see the Model Wiki).
-  <b>Format</b> — how compressed the model is (smaller = less memory, usually a little less accurate).
-  <b>LocalScore</b> — 0-100 general quality score (accuracy + reliability + efficiency + responsiveness across 22 graded tasks). Independent of Hermes Score — see below.
-  <b>Hermes Score</b> — a <i>different</i> 0-100 number specifically for "how good behind a Hermes-style personal agent": 50% real agent-task completion, 30% concurrent-session capacity, 20% responsiveness. A model can score well on one and poorly on the other (e.g. good general quality, but no tool-call parser wired up yet — see Model Wiki).
-  <b>Max Document Size</b> — the largest amount of text we actually tested it with and got a real answer back (see the note above the table — this is the tested range, not necessarily the model's true breaking point).
-  <b>Peak Speed</b> — decode tokens/sec at its best (smallest-context single-stream request).
-  <b>Max Concurrent Users</b> — how many people/sessions could use it at the same time on this one box before it slowed down or started erroring.
-  <b>Tool Calling</b> — whether it can reliably call functions/tools (needed for anything agentic, like web search or running code).
+</header>
+
+<nav class="pagenav">
+  <a href="#best-for">Best for...</a>
+  <a href="#overall">Overall quality</a>
+  <a href="#capacity">Concurrency</a>
+  <a href="#hermes">Hermes</a>
+  <a href="#performance">Performance</a>
+  <a href="#telemetry">Telemetry</a>
+</nav>
+
+<div class="stat-row">
+  <div class="stat-tile">
+    <p class="label">Models benchmarked</p>
+    <p class="value">{n}</p>
+    <p class="sub">on one GB10 box</p>
+  </div>
+  <div class="stat-tile">
+    <p class="label">Top LocalScore</p>
+    <p class="value">{stat_local_score}</p>
+    <p class="sub">{stat_local_model}</p>
+  </div>
+  <div class="stat-tile">
+    <p class="label">Top Hermes Score</p>
+    <p class="value">{stat_hermes_score}</p>
+    <p class="sub">{stat_hermes_model}</p>
+  </div>
 </div>
 
+<section class="card" id="best-for">
 <h2>Best model for...</h2>
-<p class="section-note">Different from the table below on purpose — each row here picks a winner
+<p class="section-note">Different from the sections below on purpose — each row here picks a winner
 for one specific thing you might care about, straight from the same raw measurements, instead of
 one composite number trying to represent everything at once. A model can win a category here and
 rank modestly below, or vice versa.</p>
+<div class="table-scroll">
 <table>
 <thead><tr><th>best for...</th><th>winner</th><th>why</th><th>size</th></tr></thead>
 <tbody>
 {best_for_rows}
 </tbody>
 </table>
+</div>
+</section>
 
-<h2>Full leaderboard</h2>
-<p class="section-note">"Max Concurrent Users" is the peak number of simultaneous
-orchestrator/coding/chat requests this model was tested against (same 1→32 sweep for every
-model). See "How many people can use it at once" below for the per-traffic-type breakdown, and
-the Hermes section for that workload's own (much wider-ranged) capacity sweep.</p>
+<section class="card" id="overall">
+<h2>Overall quality ranking</h2>
+<p class="section-note">General-purpose accuracy across 22 graded tasks (tool use, coding, safety,
+instruction-following, and more). LocalScore is one 0-100 number combining how often the model got
+the task right (Quality), how consistent it was across repeats (Reliability), how good its
+accuracy-per-token was (Efficiency), and how fast it started responding (Responsiveness). A
+different 0-100 number from Hermes Score below — see that section for what that one means.</p>
+<div class="table-scroll">
 <table>
 <thead><tr>
-  <th>model</th><th>label</th><th>status</th><th>size</th><th>format</th>
-  <th>LocalScore</th><th>Hermes&nbsp;Score</th>
-  <th>Max&nbsp;Document&nbsp;Size</th><th>Peak&nbsp;Speed&nbsp;(tok/s)</th><th>Max&nbsp;Concurrent&nbsp;Users</th>
-  <th>Tool&nbsp;Calling</th><th>last tested</th>
+  <th>model</th><th>label</th><th>status</th><th>LocalScore</th><th>Quality</th><th>Reliability</th>
+  <th>Efficiency</th><th>Responsiveness</th><th>tokens/sec</th><th>last run</th>
 </tr></thead>
 <tbody>
-{rows}
+{overall_rows}
 </tbody>
 </table>
+</div>
+</section>
 
-<h2>Detailed inference performance</h2>
-<p class="section-note">The numbers behind "Peak Speed" — best-case single-stream timing at the
-smallest context tested, plus the GPU memory budget each model was actually served at. TTFT =
-time to first token, TPOT = time per output token (decode latency), prefill = how fast it reads
-the prompt before answering.</p>
+<section class="card" id="capacity">
+<h2>How many people can use it at once</h2>
+<p class="section-note">The peak number of simultaneous requests of that traffic type this box was
+actually tested against — <code>orchestrator</code> is multi-step tool-chain traffic (the shape an
+autonomous agent sends), <code>coding_agent</code> is code-generation requests, <code>chat_agent</code>
+is casual back-and-forth conversation. All three are swept over the same concurrency levels (1, 2,
+4, 8, 16, 32), so the numbers are directly comparable to each other.</p>
+<div class="table-scroll">
 <table>
 <thead><tr>
-  <th>model</th><th>label</th><th>GPU&nbsp;util&nbsp;used</th><th>Load&nbsp;time</th><th>TTFT&nbsp;(ms)</th>
+  <th>model</th><th>label</th><th>tool-chain agents</th><th>coding agents</th><th>chat sessions</th>
+  <th>tool-calling works?</th>
+</tr></thead>
+<tbody>
+{orchestrator_rows}
+</tbody>
+</table>
+</div>
+</section>
+
+<section class="card" id="hermes">
+<h2>Hermes Benchmark — best model for a personal-agent harness</h2>
+<p class="section-note">One 0-100 number for "how good would this model be behind a Hermes-style
+personal agent": 50% how well it actually completes real agent tasks (tool use, web search,
+remembering things across a conversation), 30% how many concurrent sessions it sustains, 20% how
+quickly it starts responding.</p>
+<div class="table-scroll">
+<table>
+<thead><tr>
+  <th>model</th><th>label</th><th>Hermes&nbsp;Score</th><th>Quality</th><th>Capacity</th>
+  <th>Responsiveness</th><th>approx size</th>
+</tr></thead>
+<tbody>
+{hermes_rows}
+</tbody>
+</table>
+</div>
+<p class="section-note">{hermes_callout}</p>
+</section>
+
+<section class="card" id="performance">
+<h2>Detailed inference performance</h2>
+<p class="section-note">Best-case single-stream timing at the smallest context tested, the
+largest context that actually returned a real answer, and the GPU memory budget each model was
+served at. TTFT = time to first token, TPOT = time per output token (decode latency), prefill =
+how fast it reads the prompt before answering.</p>
+<div class="table-scroll">
+<table>
+<thead><tr>
+  <th>model</th><th>label</th><th>GPU&nbsp;util&nbsp;used</th><th>Load&nbsp;time</th>
+  <th>Max&nbsp;document&nbsp;size</th><th>TTFT&nbsp;(ms)</th>
   <th>Prefill&nbsp;(tok/s)</th><th>Decode&nbsp;peak&nbsp;(tok/s)</th><th>TPOT&nbsp;(ms)</th>
 </tr></thead>
 <tbody>
 {perf_rows}
 </tbody>
 </table>
+</div>
+</section>
 
+<section class="card" id="telemetry">
 <h2>Machine telemetry</h2>
 <p class="section-note">Real GPU behavior sampled every 5s for the duration of each model's
 benchmark run (not the box's own hermes-vllm production traffic) — how hot, how loaded, and how
 much memory it actually used, versus the --gpu-memory-utilization flag we asked vLLM to target.
 Only present for runs after telemetry capture was added; older runs show —.</p>
+<div class="table-scroll">
 <table>
 <thead><tr>
   <th>model</th><th>label</th><th>Peak&nbsp;GPU&nbsp;util</th><th>Avg&nbsp;GPU&nbsp;util</th>
@@ -494,9 +653,13 @@ Only present for runs after telemetry capture was added; older runs show —.</p
 {telemetry_rows}
 </tbody>
 </table>
+</div>
+</section>
 
 <footer>See the <a href="MODEL_WIKI.md">Model Wiki</a> for which models are officially recommended
 for DGX Spark / GB10 and what each one is actually good at, and the repo README for methodology.</footer>
+</div>
+</div>
 </body>
 </html>
 """
@@ -533,7 +696,7 @@ def render_html(entries, csv_name):
             best_for_rows.append(
                 f"<tr><td><b>{html.escape(title)}</b></td>"
                 f"<td><span class=\"na\">no qualifying model yet</span></td>"
-                f"<td>{html.escape(desc)}</td><td><span class=\"na\">—</span></td></tr>"
+                f"<td class=\"wrap\">{html.escape(desc)}</td><td><span class=\"na\">—</span></td></tr>"
             )
             continue
         size = f"{winner['size_b']:.0f}B" if winner.get("size_b") else '<span class="na">—</span>'
@@ -542,35 +705,80 @@ def render_html(entries, csv_name):
             f"<tr><td><b>{html.escape(title)}</b></td>"
             f"<td class=\"model\">{html.escape(winner['model'])} "
             f"<span class=\"score\">({html.escape(metric_val)})</span></td>"
-            f"<td>{html.escape(desc)}</td><td>{size}</td></tr>"
+            f"<td class=\"wrap\">{html.escape(desc)}</td><td>{size}</td></tr>"
         )
 
-    rows = []
-    for i, e in enumerate(ranked):
-        size = f"{e['size_b']:.0f}B" if e.get("size_b") else '<span class="na">—</span>'
+    overall_rows = []
+    overall_ranked = sorted(entries, key=lambda e: (e["localscore"] is None, -(e["localscore"] or 0)))
+    for i, e in enumerate(overall_ranked):
         row_cls = ' class="rank1"' if i == 0 and e["status"] == "complete" else ""
-        tc = e["tier3_pass"].get("tool_call")
-        tc_s = "✅" if tc == 1.0 else ("❌" if tc == 0.0 else '<span class="na">—</span>')
-        max_users = e.get("max_concurrent")
-        max_users_s = str(max_users) if max_users else '<span class="na">—</span>'
-        status_s = (f'<span class="status-complete">complete</span>' if e["status"] == "complete"
-                    else '<span class="status-partial">partial</span>')
-        rows.append(
+        status_s = ('<span class="pill pill-good">complete</span>' if e["status"] == "complete"
+                    else '<span class="pill pill-warning">partial</span>')
+        overall_rows.append(
             f"<tr{row_cls}>"
             f"<td class=\"model\">{html.escape(e['model'] or '—')}</td>"
             f"<td>{html.escape(e['label'])}</td>"
             f"<td>{status_s}</td>"
-            f"<td>{size}</td>"
-            f"<td>{html.escape(e.get('precision') or '—')}</td>"
             f"<td>{_hfmt(e['localscore'])}</td>"
-            f"<td>{_hfmt(e['hermes_hermes_score'])}</td>"
-            f"<td>{html.escape(_fmt_context(e.get('max_context_ok')))}</td>"
-            f"<td>{_hfmt(e['peak_decode_tps'], 0)}</td>"
-            f"<td>{max_users_s}</td>"
-            f"<td>{tc_s}</td>"
+            f"<td>{_hfmt(e['quality'])}</td>"
+            f"<td>{_hfmt(e['reliability'])}</td>"
+            f"<td>{_hfmt(e['efficiency'])}</td>"
+            f"<td>{_hfmt(e['responsiveness'])}</td>"
+            f"<td>{_hfmt(e['decode_tps'])}</td>"
             f"<td>{html.escape(e['timestamp'][:10])}</td>"
             f"</tr>"
         )
+
+    orchestrator_rows = []
+    orch_ranked = sorted(entries, key=lambda e: -(e["ceilings"].get("orchestrator") or -1))
+    for e in orch_ranked:
+        c = e["ceilings"]
+        tc = e["tier3_pass"].get("tool_call")
+        tc_s = "✅" if tc == 1.0 else ("❌" if tc == 0.0 else '<span class="na">—</span>')
+        orchestrator_rows.append(
+            f"<tr>"
+            f"<td class=\"model\">{html.escape(e['model'] or '—')}</td>"
+            f"<td>{html.escape(e['label'])}</td>"
+            f"<td>{c.get('orchestrator') or '<span class=\"na\">—</span>'}</td>"
+            f"<td>{c.get('coding_agent') or '<span class=\"na\">—</span>'}</td>"
+            f"<td>{c.get('chat_agent') or '<span class=\"na\">—</span>'}</td>"
+            f"<td>{tc_s}</td>"
+            f"</tr>"
+        )
+
+    hermes_entries = [e for e in entries if e.get("hermes_hermes_score") is not None]
+    hermes_rows = []
+    hermes_ranked = sorted(hermes_entries, key=lambda e: -(e["hermes_hermes_score"] or 0))
+    for e in hermes_ranked:
+        size = f"{e['size_b']:.0f}B" if e.get("size_b") else '<span class="na">—</span>'
+        hermes_rows.append(
+            f"<tr>"
+            f"<td class=\"model\">{html.escape(e['model'] or '—')}</td>"
+            f"<td>{html.escape(e['label'])}</td>"
+            f"<td>{_hfmt(e['hermes_hermes_score'])}</td>"
+            f"<td>{_hfmt(e['hermes_quality'])}</td>"
+            f"<td>{_hfmt(e['hermes_capacity_norm'])}</td>"
+            f"<td>{_hfmt(e['hermes_responsiveness_norm'])}</td>"
+            f"<td>{size}</td>"
+            f"</tr>"
+        )
+    if not hermes_rows:
+        hermes_callout = "No <code>hermes</code> benchmark runs recorded yet."
+    else:
+        passing = [e for e in hermes_entries if (e["hermes_hermes_score"] or 0) >= 70 and e.get("size_b")]
+        if passing:
+            smallest = min(passing, key=lambda e: e["size_b"])
+            largest = max(passing, key=lambda e: e["size_b"])
+            hermes_callout = (
+                f"<b>Smallest model that's actually good enough (70+/100):</b> "
+                f"{html.escape(smallest['model'])} (~{smallest['size_b']:.0f}B, score "
+                f"{smallest['hermes_hermes_score']:.1f}) — the one to reach for if you're tight on "
+                f"memory. <b>Largest model tested:</b> {html.escape(largest['model'])} "
+                f"(~{largest['size_b']:.0f}B, score {largest['hermes_hermes_score']:.1f}) — the "
+                f"highest-quality option this box can run."
+            )
+        else:
+            hermes_callout = ""
 
     perf_rows = []
     for e in ranked:
@@ -581,6 +789,7 @@ def render_html(entries, csv_name):
             f"<td>{html.escape(e['label'])}</td>"
             f"<td>{gpu_util_s}</td>"
             f"<td>{_hfmt_unit(e.get('load_time_s'), 's')}</td>"
+            f"<td>{html.escape(_fmt_context(e.get('max_context_ok')))}</td>"
             f"<td>{_hfmt(e['ttft_ms'], 0)}</td>"
             f"<td>{_hfmt(e['peak_prefill_tps'], 0)}</td>"
             f"<td>{_hfmt(e['peak_decode_tps'], 0)}</td>"
@@ -604,10 +813,21 @@ def render_html(entries, csv_name):
             f"</tr>"
         )
 
-    return HTML_TEMPLATE.format(csv_name=html.escape(csv_name), n=len(entries),
-                                 best_for_rows="\n".join(best_for_rows),
-                                 rows="\n".join(rows), perf_rows="\n".join(perf_rows),
-                                 telemetry_rows="\n".join(telemetry_rows))
+    top_local = overall_ranked[0] if overall_ranked and overall_ranked[0].get("localscore") is not None else None
+    top_hermes = hermes_ranked[0] if hermes_ranked else None
+
+    return HTML_TEMPLATE.format(
+        csv_name=html.escape(csv_name), n=len(entries),
+        stat_local_score=fmt(top_local["localscore"]) if top_local else "—",
+        stat_local_model=html.escape(top_local["model"]) if top_local else "no complete runs yet",
+        stat_hermes_score=fmt(top_hermes["hermes_hermes_score"]) if top_hermes else "—",
+        stat_hermes_model=html.escape(top_hermes["model"]) if top_hermes else "no hermes runs yet",
+        best_for_rows="\n".join(best_for_rows),
+        overall_rows="\n".join(overall_rows), orchestrator_rows="\n".join(orchestrator_rows),
+        hermes_rows="\n".join(hermes_rows) if hermes_rows else
+            '<tr><td colspan="7"><span class="na">no hermes benchmark runs recorded yet</span></td></tr>',
+        hermes_callout=hermes_callout,
+        perf_rows="\n".join(perf_rows), telemetry_rows="\n".join(telemetry_rows))
 
 
 def main():
