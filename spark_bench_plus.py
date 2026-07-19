@@ -7,11 +7,12 @@ dimension it doesn't have. Same design principles: stdlib only, one
 OpenAI-compatible streaming client, long-format CSV output, comparable
 across runs.
 
-  tier1     interconnect (ib_write_bw/ib_read_bw over RoCE — multi-node only)
-  tier2     raw inference: TTFT, decode tok/s, TPOT, prefill tok/s across
-            context sizes, throughput under concurrency
-  tier3     real single-shot workloads: coding (exec-verified), tool call,
-            long-context needle retrieval
+  interconnect  RoCE bandwidth between nodes (ib_write_bw/ib_read_bw) — only relevant if you're
+            running a multi-node Spark cluster; skips cleanly on a single box. (alias: tier1)
+  speed     raw inference: TTFT, decode tok/s, TPOT, prefill tok/s across
+            context sizes, throughput under concurrency. (alias: tier2)
+  checks    real single-shot workload checks: coding (exec-verified), tool call,
+            long-context needle retrieval. (alias: tier3)
   eval      graded scenario suite (tool_use, structured, robustness,
             safety, restraint, multi_step, long_context) with partial
             credit + trial statistics (Pass@1, Pass@K, reliability gap)
@@ -26,8 +27,8 @@ Requirements: Python 3.10+, stdlib only. Any OpenAI-compatible endpoint
 (vLLM, llama.cpp, OpenRouter, etc).
 
 Examples:
-  # what the original repo does
-  ./spark_bench_plus.py tier2 --label qwen-baseline \\
+  # raw inference speed
+  ./spark_bench_plus.py speed --label qwen-baseline \\
       --model nvidia/Qwen3.6-35B-A3B-NVFP4 --endpoint http://localhost:8000/v1 \\
       --contexts 4096,32768 --concurrency 1,4,16
 
@@ -171,12 +172,21 @@ def chat_stream(endpoint, model, messages, max_tokens, *, temperature=0.3, tools
     text = "".join(text_parts)
     comp = usage.get("completion_tokens") or max(1, len(text) // 4)
     ptoks = usage.get("prompt_tokens")
-    decode_t = max(total - (ttft or total), 1e-6)
+    # Reasoning models often withhold ALL visible content until thinking finishes, so TTFT can
+    # land within a few ms of total — computing tok/s over that near-zero window explodes to
+    # nonsense (millions/billions of tok/s). Below a sane floor, fall back to whole-response
+    # tok/s instead of pretending the post-TTFT window is a meaningful decode measurement.
+    decode_window = total - (ttft or total)
+    if decode_window < 0.25:
+        decode_tps = comp / total if total > 0 else 0.0
+        tpot_ms = (total / max(comp - 1, 1)) * 1000 if comp > 1 else 0.0
+    else:
+        decode_tps = comp / decode_window if comp else 0.0
+        tpot_ms = (decode_window / max(comp - 1, 1)) * 1000 if comp > 1 else 0.0
     return {"error": None, "ttft": ttft if ttft is not None else total, "total": total,
             "text": text, "tool_calls": _merge_tool_calls(tool_frags),
             "prompt_tokens": ptoks, "completion_tokens": comp,
-            "decode_tps": comp / decode_t if comp else 0.0,
-            "tpot_ms": (decode_t / max(comp - 1, 1)) * 1000 if comp > 1 else 0.0}
+            "decode_tps": decode_tps, "tpot_ms": tpot_ms}
 
 def _merge_tool_calls(fragments):
     by_idx = {}
@@ -680,17 +690,17 @@ def main():
             sp.add_argument("--model", required=True)
             sp.add_argument("--timeout", type=int, default=300)
 
-    s1 = sub.add_parser("tier1"); common(s1, need_model=False)
+    s1 = sub.add_parser("interconnect", aliases=["tier1"]); common(s1, need_model=False)
     s1.add_argument("--peer-ssh", default="")
     s1.add_argument("--links", default="")
 
-    s2 = sub.add_parser("tier2"); common(s2)
+    s2 = sub.add_parser("speed", aliases=["tier2"]); common(s2)
     s2.add_argument("--contexts", default="4096")
     s2.add_argument("--concurrency", default="1,8")
     s2.add_argument("--conc-context", type=int, default=1024)
     s2.add_argument("--gen-tokens", type=int, default=256)
 
-    s3 = sub.add_parser("tier3"); common(s3)
+    s3 = sub.add_parser("checks", aliases=["tier3"]); common(s3)
     s3.add_argument("--retrieval-context", type=int, default=8192)
 
     se = sub.add_parser("eval"); common(se)
@@ -734,13 +744,18 @@ def main():
                      help="TTFT (ms) considered full score (100) for the responsiveness component")
 
     args = p.parse_args()
+    # Old tier1/tier2/tier3 names still work (argparse aliases above) but always normalize to
+    # the canonical name here so the CSV's "cmd" column stays consistent regardless of which
+    # name was actually typed on the command line.
+    LEGACY_CMD_NAMES = {"tier1": "interconnect", "tier2": "speed", "tier3": "checks"}
+    args.cmd = LEGACY_CMD_NAMES.get(args.cmd, args.cmd)
     ctx = build_ctx(args, args.cmd)
 
-    if args.cmd == "tier1":
+    if args.cmd == "interconnect":
         run_tier1(ctx, args)
-    elif args.cmd == "tier2":
+    elif args.cmd == "speed":
         run_tier2(ctx, args)
-    elif args.cmd == "tier3":
+    elif args.cmd == "checks":
         run_tier3(ctx, args)
     elif args.cmd == "eval":
         run_eval(ctx, args)

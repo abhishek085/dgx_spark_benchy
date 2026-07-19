@@ -1,0 +1,5269 @@
+{
+  "orchestrator": [
+    {
+      "id": "orchestrator_gen_0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "..."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "..."
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_1",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Do I have a meeting scheduled for tomorrow at 10 AM?"
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check if the user has any events on a given date after a specific time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date in YYYY-MM-DD format"
+                },
+                "after": {
+                  "type": "string",
+                  "description": "Time in HH:MM format (24-hour) after which to check"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_2",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please draft an email to alice@example.com with the subject 'Project Update' and body 'The project is on track for delivery next week.'"
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email with given recipient, subject, and body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string",
+                  "description": "Recipient email address"
+                },
+                "subject": {
+                  "type": "string",
+                  "description": "Email subject line"
+                },
+                "body": {
+                  "type": "string",
+                  "description": "Email body content"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_3",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Set a reminder for me to call my mom at 5 PM today."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Reminder title"
+                },
+                "due": {
+                  "type": "string",
+                  "description": "Due date-time in ISO 8601 format"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "create_reminder"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_4",
+      "messages": [
+        {
+          "role": "user",
+          "content": "If I am free this Friday at 2 PM, I want a reminder to prepare my presentation; otherwise, I want to draft an apology email to my boss explaining the conflict. Provide a JSON plan with the condition and the action to take."
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "condition",
+          "action"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_5",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Search the web for the latest news about AI regulation in 2024."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Perform a web search for a given query.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "Search query"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "web_search"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_6",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Do I have a meeting scheduled for tomorrow at 10 AM?"
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check if the user has any events on a given date after a specific time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date in YYYY-MM-DD format"
+                },
+                "after": {
+                  "type": "string",
+                  "description": "Time in HH:MM format (24-hour) after which to check"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_7",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please draft an email to alice@example.com with the subject 'Project Update' and body 'The project is on track for delivery next week.'"
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email with given recipient, subject, and body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string",
+                  "description": "Recipient email address"
+                },
+                "subject": {
+                  "type": "string",
+                  "description": "Email subject line"
+                },
+                "body": {
+                  "type": "string",
+                  "description": "Email body content"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_8",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Set a reminder for me to call my mom at 5 PM today."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Reminder title"
+                },
+                "due": {
+                  "type": "string",
+                  "description": "Due date-time in ISO 8601 format"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "create_reminder"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_9",
+      "messages": [
+        {
+          "role": "user",
+          "content": "If I am free this Friday at 2 PM, I want a reminder to prepare my presentation; otherwise, I want to draft an apology email to my boss explaining the conflict. Provide a JSON plan with the condition and the action to take."
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "condition",
+          "action"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_10",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Search the web for the latest news about AI regulation in 2024."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Perform a web search for a given query.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "Search query"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "web_search"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_11",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for tomorrow at 10am. If I'm free, create a reminder to prepare the quarterly report."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check availability on a calendar date.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date in YYYY-MM-DD format"
+                },
+                "after": {
+                  "type": "string",
+                  "description": "Optional time after which to check availability (HH:MM)"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due date/time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Reminder title"
+                },
+                "due": {
+                  "type": "string",
+                  "description": "Due date/time in ISO 8601 format"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "create_reminder"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_12",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Draft an email to Alex Chen with subject 'Project Update' and body summarizing the progress made this week on the Orion module."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email with recipient, subject, and body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "Project Update",
+          "Orion module"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_13",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Search the web for the latest AI regulation news from the past month and give a brief summary."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Perform a web search query.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "Search query"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "AI regulation",
+          "summary"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_14",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Read the file '/tmp/test_cases.json' and run the tests described inside using the run_tests tool."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "description": "Read contents of a file at a given path.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "File path"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "run_tests",
+            "description": "Run tests based on a summary.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "summary": {
+                  "type": "string",
+                  "description": "Summary of tests to run"
+                }
+              },
+              "required": [
+                "summary"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "read_file",
+          "run_tests"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_15",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for next Monday at 2pm. If I am busy, create a reminder to reschedule the meeting; otherwise, do nothing."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check availability on a calendar date.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date in YYYY-MM-DD format"
+                },
+                "after": {
+                  "type": "string",
+                  "description": "Optional time after which to check availability (HH:MM)"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due date/time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Reminder title"
+                },
+                "due": {
+                  "type": "string",
+                  "description": "Due date/time in ISO 8601 format"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "reschedule",
+          "reminder"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_16",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for tomorrow at 10am. If I'm free, create a reminder to prepare the quarterly report."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check availability on a calendar date.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date in YYYY-MM-DD format"
+                },
+                "after": {
+                  "type": "string",
+                  "description": "Optional time after which to check availability (HH:MM)"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due date/time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Reminder title"
+                },
+                "due": {
+                  "type": "string",
+                  "description": "Due date/time in ISO 8601 format"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "create_reminder"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_17",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Draft an email to Alex Chen with subject 'Project Update' and body summarizing the progress made this week on the Orion module."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email with recipient, subject, and body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "Project Update",
+          "Orion module"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_18",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Search the web for the latest AI regulation news from the past month and give a brief summary."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Perform a web search query.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "Search query"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "AI regulation",
+          "summary"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_19",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Read the file '/tmp/test_cases.json' and run the tests described inside using the run_tests tool."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "description": "Read contents of a file at a given path.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "File path"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "run_tests",
+            "description": "Run tests based on a summary.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "summary": {
+                  "type": "string",
+                  "description": "Summary of tests to run"
+                }
+              },
+              "required": [
+                "summary"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "read_file",
+          "run_tests"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_20",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for next Monday at 2pm. If I am busy, create a reminder to reschedule the meeting; otherwise, do nothing."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check availability on a calendar date.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date in YYYY-MM-DD format"
+                },
+                "after": {
+                  "type": "string",
+                  "description": "Optional time after which to check availability (HH:MM)"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due date/time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Reminder title"
+                },
+                "due": {
+                  "type": "string",
+                  "description": "Due date/time in ISO 8601 format"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "reschedule",
+          "reminder"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_21",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for tomorrow at 10am. If I'm free, create a reminder to prepare the quarterly report."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check availability on a calendar date.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date in YYYY-MM-DD format"
+                },
+                "after": {
+                  "type": "string",
+                  "description": "Optional time after which to check availability (HH:MM)"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due date/time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Reminder title"
+                },
+                "due": {
+                  "type": "string",
+                  "description": "Due date/time in ISO 8601 format"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "create_reminder"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_22",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Draft an email to Alex Chen with subject 'Project Update' and body summarizing the progress made this week on the Orion module."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email with recipient, subject, and body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "Project Update",
+          "Orion module"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_23",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Search the web for the latest AI regulation news from the past month and give a brief summary."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Perform a web search query.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "Search query"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "AI regulation",
+          "summary"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_24",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Read the file '/tmp/test_cases.json' and run the tests described inside using the run_tests tool."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "description": "Read contents of a file at a given path.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "File path"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "run_tests",
+            "description": "Run tests based on a summary.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "summary": {
+                  "type": "string",
+                  "description": "Summary of tests to run"
+                }
+              },
+              "required": [
+                "summary"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "read_file",
+          "run_tests"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_25",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for next Monday at 2pm. If I am busy, create a reminder to reschedule the meeting; otherwise, do nothing."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check availability on a calendar date.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date in YYYY-MM-DD format"
+                },
+                "after": {
+                  "type": "string",
+                  "description": "Optional time after which to check availability (HH:MM)"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due date/time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Reminder title"
+                },
+                "due": {
+                  "type": "string",
+                  "description": "Due date/time in ISO 8601 format"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "reschedule",
+          "reminder"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_26",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for tomorrow morning after 9 AM and if there are any meetings, draft an email to my team summarizing them."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check the calendar for a given date and time condition.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date to check (YYYY-MM-DD)"
+                },
+                "after": {
+                  "type": "boolean",
+                  "description": "Whether to check after a certain time (e.g., morning after 9 AM)"
+                }
+              },
+              "required": [
+                "date",
+                "after"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email to a recipient with subject and body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string",
+                  "description": "Recipient email address"
+                },
+                "subject": {
+                  "type": "string",
+                  "description": "Email subject"
+                },
+                "body": {
+                  "type": "string",
+                  "description": "Email body"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_27",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Look at my calendar for today after 2 PM. If I have a meeting scheduled after 2 PM, create a reminder titled 'Prepare for meeting' due 10 minutes before the meeting starts. Otherwise, just let me know I have no afternoon meeting."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check the calendar for a given date and time condition.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date to check (YYYY-MM-DD)"
+                },
+                "after": {
+                  "type": "boolean",
+                  "description": "Whether to check after a certain time (e.g., afternoon after 2 PM)"
+                }
+              },
+              "required": [
+                "date",
+                "after"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due date/time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Reminder title"
+                },
+                "due": {
+                  "type": "string",
+                  "description": "Due date/time (ISO 8601)"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "create_reminder"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_28",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Read the file '/home/user/schedule.json' and return a JSON object containing the fields 'date', 'title', and 'time' for the first event listed."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "description": "Read the contents of a file at the given path.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "File path to read"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "date",
+          "title",
+          "time"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_29",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for tomorrow morning after 9 AM and if there are any meetings, draft an email to my team summarizing them."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check the calendar for a given date and time condition.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date to check (YYYY-MM-DD)"
+                },
+                "after": {
+                  "type": "boolean",
+                  "description": "Whether to check after a certain time (e.g., morning after 9 AM)"
+                }
+              },
+              "required": [
+                "date",
+                "after"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email to a recipient with subject and body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string",
+                  "description": "Recipient email address"
+                },
+                "subject": {
+                  "type": "string",
+                  "description": "Email subject"
+                },
+                "body": {
+                  "type": "string",
+                  "description": "Email body"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_30",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Look at my calendar for today after 2 PM. If I have a meeting scheduled after 2 PM, create a reminder titled 'Prepare for meeting' due 10 minutes before the meeting starts. Otherwise, just let me know I have no afternoon meeting."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check the calendar for a given date and time condition.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date to check (YYYY-MM-DD)"
+                },
+                "after": {
+                  "type": "boolean",
+                  "description": "Whether to check after a certain time (e.g., afternoon after 2 PM)"
+                }
+              },
+              "required": [
+                "date",
+                "after"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due date/time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Reminder title"
+                },
+                "due": {
+                  "type": "string",
+                  "description": "Due date/time (ISO 8601)"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "create_reminder"
+        ]
+      }
+    },
+    {
+      "id": "orchestrator_gen_31",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Read the file '/home/user/schedule.json' and return a JSON object containing the fields 'date', 'title', and 'time' for the first event listed."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "description": "Read the contents of a file at the given path.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "File path to read"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "date",
+          "title",
+          "time"
+        ]
+      }
+    }
+  ],
+  "coding_agent": [
+    {
+      "id": "coding_agent_gen_0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function `is_palindrome(s)` that returns True if the string `s` is a palindrome when ignoring case and non-alphanumeric characters. Output only a single Python code block with the function definition, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "is_palindrome",
+        "test_cases": [
+          {
+            "args": [
+              "A man, a plan, a canal: Panama"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "race a car"
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              ""
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "12321"
+            ],
+            "expected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_1",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function `fibonacci(n)` that returns the nth Fibonacci number (0-indexed) using an iterative approach. Output only a single Python code block with the function definition, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fibonacci",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 0
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 5
+          },
+          {
+            "args": [
+              10
+            ],
+            "expected": 55
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_2",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function `merge_sorted(a, b)` that takes two sorted lists and returns a new sorted list containing all elements from both inputs. Output only a single Python code block with the function definition, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "merge_sorted",
+        "test_cases": [
+          {
+            "args": [
+              [
+                1,
+                3,
+                5
+              ],
+              [
+                2,
+                4,
+                6
+              ]
+            ],
+            "expected": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "args": [
+              [],
+              [
+                1,
+                2,
+                3
+              ]
+            ],
+            "expected": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "args": [
+              [
+                1,
+                2,
+                2
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "expected": [
+              1,
+              2,
+              2,
+              2,
+              3
+            ]
+          },
+          {
+            "args": [
+              [
+                -5,
+                0,
+                5
+              ],
+              [
+                -3,
+                1
+              ]
+            ],
+            "expected": [
+              -5,
+              -3,
+              0,
+              1,
+              5
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_3",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function `factorial(n)` that returns the factorial of a non-negative integer `n` using recursion. Output only a single Python code block with the function definition, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "factorial",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          },
+          {
+            "args": [
+              7
+            ],
+            "expected": 5040
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_4",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named sum_squares_even that takes a list of integers and returns the sum of squares of the even numbers. Output only a single python code block with the function definition, no extra text."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "sum_squares_even",
+        "test_cases": [
+          {
+            "args": [
+              [
+                1,
+                2,
+                3,
+                4
+              ]
+            ],
+            "expected": 20
+          },
+          {
+            "args": [
+              [
+                2,
+                4,
+                6
+              ]
+            ],
+            "expected": 56
+          },
+          {
+            "args": [
+              [
+                1,
+                3,
+                5
+              ]
+            ],
+            "expected": 0
+          },
+          {
+            "args": [
+              [
+                0,
+                -2,
+                -3
+              ]
+            ],
+            "expected": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_5",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named sum_squares_even that takes a list of integers and returns the sum of squares of the even numbers. Output only a single python code block with the function definition, no extra text."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "sum_squares_even",
+        "test_cases": [
+          {
+            "args": [
+              [
+                1,
+                2,
+                3,
+                4
+              ]
+            ],
+            "expected": 20
+          },
+          {
+            "args": [
+              [
+                2,
+                4,
+                6
+              ]
+            ],
+            "expected": 56
+          },
+          {
+            "args": [
+              [
+                1,
+                3,
+                5
+              ]
+            ],
+            "expected": 0
+          },
+          {
+            "args": [
+              [
+                0,
+                -2,
+                -3
+              ]
+            ],
+            "expected": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_6",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named reverse_words that takes a string and returns a new string where each word's characters are reversed, but the word order stays the same. Words are separated by spaces. Output only a single python code block with the function definition, no extra text."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "reverse_words",
+        "test_cases": [
+          {
+            "args": [
+              "hello world"
+            ],
+            "expected": "olleh dlrow"
+          },
+          {
+            "args": [
+              "Python is fun"
+            ],
+            "expected": "nohtyP si nuf"
+          },
+          {
+            "args": [
+              ""
+            ],
+            "expected": ""
+          },
+          {
+            "args": [
+              "a b c"
+            ],
+            "expected": "a b c"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_7",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named is_palindrome that takes a string and returns True if it reads the same forwards and backwards when ignoring case and non-alphanumeric characters, otherwise False. Output only a single python code block with the function definition, no extra text."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "is_palindrome",
+        "test_cases": [
+          {
+            "args": [
+              "A man, a plan, a canal: Panama"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "race a car"
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              ""
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "No lemon, no melon"
+            ],
+            "expected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_8",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named merge_intervals that takes a list of intervals, each interval as a list or tuple of two integers [start, end] (start <= end), merges all overlapping intervals, and returns a list of merged intervals sorted by start. Output only a single python code block with the function definition, no extra text."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "merge_intervals",
+        "test_cases": [
+          {
+            "args": [
+              [
+                [
+                  1,
+                  3
+                ],
+                [
+                  2,
+                  6
+                ],
+                [
+                  8,
+                  10
+                ],
+                [
+                  15,
+                  18
+                ]
+              ]
+            ],
+            "expected": [
+              [
+                1,
+                6
+              ],
+              [
+                8,
+                10
+              ],
+              [
+                15,
+                18
+              ]
+            ]
+          },
+          {
+            "args": [
+              [
+                [
+                  1,
+                  4
+                ],
+                [
+                  4,
+                  5
+                ]
+              ]
+            ],
+            "expected": [
+              [
+                1,
+                5
+              ]
+            ]
+          },
+          {
+            "args": [
+              []
+            ],
+            "expected": []
+          },
+          {
+            "args": [
+              [
+                [
+                  1,
+                  4
+                ],
+                [
+                  0,
+                  4
+                ]
+              ]
+            ],
+            "expected": [
+              [
+                0,
+                4
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_9",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named binary_search that takes a sorted list of integers and a target integer, returns the index of the target if found, otherwise -1. Assume no duplicates. Output only a single python code block with the function definition, no extra text."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "binary_search",
+        "test_cases": [
+          {
+            "args": [
+              [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              3
+            ],
+            "expected": 2
+          },
+          {
+            "args": [
+              [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              6
+            ],
+            "expected": -1
+          },
+          {
+            "args": [
+              [],
+              5
+            ],
+            "expected": -1
+          },
+          {
+            "args": [
+              [
+                -10,
+                0,
+                5,
+                10,
+                20
+              ],
+              0
+            ],
+            "expected": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_10",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named fibonacci that takes a non-negative integer n and returns the nth Fibonacci number (0-indexed). Output only one python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fibonacci",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 0
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 5
+          },
+          {
+            "args": [
+              10
+            ],
+            "expected": 55
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_11",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named is_palindrome that takes a string s and returns True if s is a palindrome ignoring case and non-alphanumeric characters, else False. Output only one python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "is_palindrome",
+        "test_cases": [
+          {
+            "args": [
+              "A man, a plan, a canal: Panama"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "race a car"
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              ""
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "Madam"
+            ],
+            "expected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_12",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named word_count that takes a list of strings and returns a dictionary mapping each unique string to its frequency in the list. Output only one python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "word_count",
+        "test_cases": [
+          {
+            "args": [
+              [
+                "apple",
+                "banana",
+                "apple",
+                "orange"
+              ]
+            ],
+            "expected": {
+              "apple": 2,
+              "banana": 1,
+              "orange": 1
+            }
+          },
+          {
+            "args": [
+              []
+            ],
+            "expected": {}
+          },
+          {
+            "args": [
+              [
+                "test",
+                "test",
+                "test"
+              ]
+            ],
+            "expected": {
+              "test": 3
+            }
+          },
+          {
+            "args": [
+              [
+                "a",
+                "b",
+                "c",
+                "a",
+                "b",
+                "a"
+              ]
+            ],
+            "expected": {
+              "a": 3,
+              "b": 2,
+              "c": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_13",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named factorial that takes a non-negative integer n and returns n! (the factorial of n). Output only one python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "factorial",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          },
+          {
+            "args": [
+              7
+            ],
+            "expected": 5040
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_14",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named factorial that takes a non-negative integer n and returns its factorial. Output only one python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "factorial",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          },
+          {
+            "args": [
+              3
+            ],
+            "expected": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_15",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named factorial that takes a non-negative integer n and returns its factorial. Output only one python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "factorial",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          },
+          {
+            "args": [
+              3
+            ],
+            "expected": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_16",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named is_palindrome that takes a string s and returns True if s reads the same forwards and backwards ignoring case and non-alphanumeric characters, else False. Output only one python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "is_palindrome",
+        "test_cases": [
+          {
+            "args": [
+              "A man, a plan, a canal: Panama"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "race a car"
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              ""
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "Madam"
+            ],
+            "expected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_17",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named calc that takes three arguments: a (float), b (float), op (string) where op is one of '+', '-', '*', '/', and returns the result of applying op to a and b. For division, return None if b is zero. Output only one python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "calc",
+        "test_cases": [
+          {
+            "args": [
+              10,
+              5,
+              "+"
+            ],
+            "expected": 15
+          },
+          {
+            "args": [
+              10,
+              5,
+              "-"
+            ],
+            "expected": 5
+          },
+          {
+            "args": [
+              10,
+              5,
+              "*"
+            ],
+            "expected": 50
+          },
+          {
+            "args": [
+              10,
+              0,
+              "/"
+            ],
+            "expected": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_18",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named list_max that takes a list of integers and returns the maximum value. If the list is empty, return None. Output only one python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "list_max",
+        "test_cases": [
+          {
+            "args": [
+              [
+                1,
+                5,
+                3,
+                9,
+                2
+              ]
+            ],
+            "expected": 9
+          },
+          {
+            "args": [
+              []
+            ],
+            "expected": null
+          },
+          {
+            "args": [
+              [
+                -3,
+                -1,
+                -7
+              ]
+            ],
+            "expected": -1
+          },
+          {
+            "args": [
+              [
+                42
+              ]
+            ],
+            "expected": 42
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_19",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named celsius_to_fahrenheit that takes a temperature in Celsius (float) and returns the temperature in Fahrenheit (float) using the formula F = C * 9/5 + 32. Output only one python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "celsius_to_fahrenheit",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 32.0
+          },
+          {
+            "args": [
+              100
+            ],
+            "expected": 212.0
+          },
+          {
+            "args": [
+              -40
+            ],
+            "expected": -40.0
+          },
+          {
+            "args": [
+              37.5
+            ],
+            "expected": 99.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_20",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named `fn` that computes the factorial of a non\u2011negative integer. Output only a single python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fn",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          },
+          {
+            "args": [
+              3
+            ],
+            "expected": 6
+          },
+          {
+            "args": [
+              7
+            ],
+            "expected": 5040
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_21",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named `fn` that computes the factorial of a non\u2011negative integer. Output only a single python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fn",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          },
+          {
+            "args": [
+              3
+            ],
+            "expected": 6
+          },
+          {
+            "args": [
+              7
+            ],
+            "expected": 5040
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_22",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named `fn` that takes a string and returns True if it is a palindrome when ignoring case and non\u2011alphanumeric characters, otherwise False. Output only a single python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fn",
+        "test_cases": [
+          {
+            "args": [
+              "A man, a plan, a canal: Panama"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "racecar"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "hello"
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              ""
+            ],
+            "expected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_23",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named `fn` that takes two sorted lists of integers and returns a new list containing all elements from both lists in sorted order. Output only a single python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fn",
+        "test_cases": [
+          {
+            "args": [
+              [
+                1,
+                3,
+                5
+              ],
+              [
+                2,
+                4,
+                6
+              ]
+            ],
+            "expected": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "args": [
+              [],
+              [
+                1,
+                2,
+                3
+              ]
+            ],
+            "expected": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "args": [
+              [
+                1,
+                2,
+                3
+              ],
+              []
+            ],
+            "expected": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "args": [
+              [
+                1,
+                1,
+                2
+              ],
+              [
+                1,
+                3,
+                4
+              ]
+            ],
+            "expected": [
+              1,
+              1,
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_24",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named `fn` that takes a list of hashable items and returns the item that appears most frequently. If multiple items share the highest frequency, return the one that appears first in the list. Output only a single python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fn",
+        "test_cases": [
+          {
+            "args": [
+              [
+                1,
+                2,
+                2,
+                3,
+                3,
+                3
+              ]
+            ],
+            "expected": 3
+          },
+          {
+            "args": [
+              [
+                "apple",
+                "banana",
+                "apple",
+                "orange",
+                "banana",
+                "banana"
+              ]
+            ],
+            "expected": "banana"
+          },
+          {
+            "args": [
+              [
+                5,
+                5,
+                4,
+                4,
+                4,
+                5
+              ]
+            ],
+            "expected": 5
+          },
+          {
+            "args": [
+              [
+                "x",
+                "y",
+                "y",
+                "x",
+                "x"
+              ]
+            ],
+            "expected": "x"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_25",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named `fn` that returns the nth Fibonacci number (0-indexed, where fn(0)=0, fn(1)=1). Output only a single python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fn",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 0
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 5
+          },
+          {
+            "args": [
+              10
+            ],
+            "expected": 55
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_26",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named `fn` that computes the factorial of a non\u2011negative integer. Output only a single python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fn",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          },
+          {
+            "args": [
+              3
+            ],
+            "expected": 6
+          },
+          {
+            "args": [
+              7
+            ],
+            "expected": 5040
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_27",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named `fn` that takes a string and returns True if it is a palindrome when ignoring case and non\u2011alphanumeric characters, otherwise False. Output only a single python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fn",
+        "test_cases": [
+          {
+            "args": [
+              "A man, a plan, a canal: Panama"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "racecar"
+            ],
+            "expected": true
+          },
+          {
+            "args": [
+              "hello"
+            ],
+            "expected": false
+          },
+          {
+            "args": [
+              ""
+            ],
+            "expected": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_28",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named `fn` that takes two sorted lists of integers and returns a new list containing all elements from both lists in sorted order. Output only a single python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fn",
+        "test_cases": [
+          {
+            "args": [
+              [
+                1,
+                3,
+                5
+              ],
+              [
+                2,
+                4,
+                6
+              ]
+            ],
+            "expected": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ]
+          },
+          {
+            "args": [
+              [],
+              [
+                1,
+                2,
+                3
+              ]
+            ],
+            "expected": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "args": [
+              [
+                1,
+                2,
+                3
+              ],
+              []
+            ],
+            "expected": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "args": [
+              [
+                1,
+                1,
+                2
+              ],
+              [
+                1,
+                3,
+                4
+              ]
+            ],
+            "expected": [
+              1,
+              1,
+              1,
+              2,
+              3,
+              4
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_29",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named `fn` that takes a list of hashable items and returns the item that appears most frequently. If multiple items share the highest frequency, return the one that appears first in the list. Output only a single python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fn",
+        "test_cases": [
+          {
+            "args": [
+              [
+                1,
+                2,
+                2,
+                3,
+                3,
+                3
+              ]
+            ],
+            "expected": 3
+          },
+          {
+            "args": [
+              [
+                "apple",
+                "banana",
+                "apple",
+                "orange",
+                "banana",
+                "banana"
+              ]
+            ],
+            "expected": "banana"
+          },
+          {
+            "args": [
+              [
+                5,
+                5,
+                4,
+                4,
+                4,
+                5
+              ]
+            ],
+            "expected": 5
+          },
+          {
+            "args": [
+              [
+                "x",
+                "y",
+                "y",
+                "x",
+                "x"
+              ]
+            ],
+            "expected": "x"
+          }
+        ]
+      }
+    },
+    {
+      "id": "coding_agent_gen_30",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named `fn` that returns the nth Fibonacci number (0-indexed, where fn(0)=0, fn(1)=1). Output only a single python code block, no explanation."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "fn",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 0
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 5
+          },
+          {
+            "args": [
+              10
+            ],
+            "expected": 55
+          }
+        ]
+      }
+    }
+  ],
+  "chat_agent": [
+    {
+      "id": "chat_agent_gen_0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "..."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "..."
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_1",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Can you give me a brief one\u2011sentence summary of the fable 'The Tortoise and the Hare'?"
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "tortoise",
+          "hare",
+          "race"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_2",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please write a polite reminder to my coworker Alex about our project meeting tomorrow at 10 am."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "reminder",
+          "meeting",
+          "tomorrow"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_3",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Give me a JSON object that contains the Celsius temperature 25 and its Fahrenheit equivalent."
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "celsius",
+          "fahrenheit"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_4",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Is the password 'Sunshine$2024' considered strong? Explain why or why not."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "strong",
+          "weak"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_5",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Suggest a useful gift for a friend who enjoys hiking, and return it as a JSON object with a field 'gift'."
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "gift"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_6",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Can you give me a brief one\u2011sentence summary of the fable 'The Tortoise and the Hare'?"
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "tortoise",
+          "hare",
+          "race"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_7",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please write a polite reminder to my coworker Alex about our project meeting tomorrow at 10 am."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "reminder",
+          "meeting",
+          "tomorrow"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_8",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Give me a JSON object that contains the Celsius temperature 25 and its Fahrenheit equivalent."
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "celsius",
+          "fahrenheit"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_9",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Is the password 'Sunshine$2024' considered strong? Explain why or why not."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "strong",
+          "weak"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_10",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Suggest a useful gift for a friend who enjoys hiking, and return it as a JSON object with a field 'gift'."
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "gift"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_11",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Remind me to water the plants at 8 AM tomorrow."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "Remind",
+          "water"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_12",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Draft an email to my boss about the project deadline slipping."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email to send.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_13",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What do I have on my calendar for today?"
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check calendar events for a given date.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "after": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_14",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Find a quick vegan pancake recipe."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web for information.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "web_search"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_15",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Give me a JSON object with your name and favorite color."
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "name",
+          "favorite_color"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_16",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Remind me to water the plants at 8 AM tomorrow."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "Remind",
+          "water"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_17",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Draft an email to my boss about the project deadline slipping."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email to send.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_18",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What do I have on my calendar for today?"
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check calendar events for a given date.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "after": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_19",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Find a quick vegan pancake recipe."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web for information.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "web_search"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_20",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Give me a JSON object with your name and favorite color."
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "name",
+          "favorite_color"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_21",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Good morning! Can you remind me what the weather is like today?"
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "weather",
+          "today"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_22",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Tell me a funny joke about cats."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "cat",
+          "joke"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_23",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Explain photosynthesis in two sentences."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "photosynthesis",
+          "plants"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_24",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Remind me to call the dentist tomorrow at 10 AM."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "reminder",
+          "dentist"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_25",
+      "messages": [
+        {
+          "role": "user",
+          "content": "How do you say 'Thank you very much' in French?"
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "French",
+          "thank you"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_26",
+      "messages": [
+        {
+          "role": "user",
+          "content": "If I buy three notebooks at $2.50 each and a pen for $1.20, what is the total cost?"
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "total",
+          "cost"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_27",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Tell me an interesting fact about octopuses."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "three hearts",
+          "blue blood",
+          "camouflage"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_28",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Provide a JSON object that describes a book, including its title and author."
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "title",
+          "author"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_29",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named factorial that computes the factorial of a non\u2011negative integer."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "factorial",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          }
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_30",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Tell me an interesting fact about octopuses."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "three hearts",
+          "blue blood",
+          "camouflage"
+        ]
+      }
+    },
+    {
+      "id": "chat_agent_gen_31",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Provide a JSON object that describes a book, including its title and author."
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "title",
+          "author"
+        ]
+      }
+    }
+  ],
+  "hermes": [
+    {
+      "id": "hermes_gen_0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please summarize the key points of the attached article about renewable energy trends in 2024."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "renewable",
+          "2024",
+          "trends"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_1",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please summarize the key points of the attached article about renewable energy trends in 2024."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "renewable",
+          "2024",
+          "trends"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_2",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for tomorrow morning and draft an email to the team about the meeting."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check calendar for a given date",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "Date to check (YYYY-MM-DD)"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email with given recipients, subject, and body",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string",
+                  "description": "Recipient email address"
+                },
+                "subject": {
+                  "type": "string",
+                  "description": "Email subject line"
+                },
+                "body": {
+                  "type": "string",
+                  "description": "Email body content"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_3",
+      "messages": [
+        {
+          "role": "user",
+          "content": "From the following text, extract the name, email, and phone number and return them as a JSON object: \"Contact: Alice Smith, email: alice@example.com, phone: 555-1234.\""
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "name",
+          "email",
+          "phone"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_4",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named factorial that computes the factorial of a non-negative integer. Include a docstring."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "factorial",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          },
+          {
+            "args": [
+              3
+            ],
+            "expected": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_5",
+      "messages": [
+        {
+          "role": "user",
+          "content": "I prefer to have my reminders set for 9 AM each day."
+        },
+        {
+          "role": "assistant",
+          "content": "Got it, I'll note your preference for 9 AM reminders."
+        },
+        {
+          "role": "user",
+          "content": "Also, I like to remind myself to drink water."
+        },
+        {
+          "role": "assistant",
+          "content": "Noted, drinking water reminder."
+        },
+        {
+          "role": "user",
+          "content": "Create a reminder for drinking water at 9 AM tomorrow."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due time",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Title of the reminder"
+                },
+                "due": {
+                  "type": "string",
+                  "description": "Due date and time in ISO 8601 format"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "create_reminder"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_6",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is the capital of France?"
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "Paris"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_7",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for tomorrow and if I'm free, create a reminder to call my dentist at 10 AM."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check calendar for a given date, optionally after a certain time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "after": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "date",
+                "after"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "due": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "create_reminder"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_8",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Read the meeting notes from /home/user/notes.txt and draft an email to the team summarizing the decisions."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "description": "Read the contents of a file at the given path.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email with recipient, subject, and body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "to",
+          "subject",
+          "body"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_9",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function called factorial that computes the factorial of a non-negative integer. Include a few test cases."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "factorial",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          }
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_10",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please set a reminder for me to call my mom at 5 PM today."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "reminder",
+          "set"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_11",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for next Monday."
+        },
+        {
+          "role": "user",
+          "content": "If I'm free, search for flights from New York to Los Angeles departing that day."
+        },
+        {
+          "role": "user",
+          "content": "Draft an email to my team with the flight options and ask for their preference."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check calendar for a given date, optionally after a certain time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "after": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "date",
+                "after"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web for a query.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email with recipient, subject, and body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "web_search",
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_12",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for tomorrow and if I'm free, create a reminder to call my dentist at 10 AM."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check calendar for a given date, optionally after a certain time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "after": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "date",
+                "after"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder with a title and due time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "due": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "create_reminder"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_13",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Read the meeting notes from /home/user/notes.txt and draft an email to the team summarizing the decisions."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "description": "Read the contents of a file at the given path.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email with recipient, subject, and body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "to",
+          "subject",
+          "body"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_14",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function called factorial that computes the factorial of a non-negative integer. Include a few test cases."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "factorial",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          }
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_15",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please set a reminder for me to call my mom at 5 PM today."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "reminder",
+          "set"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_16",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check my calendar for next Monday."
+        },
+        {
+          "role": "user",
+          "content": "If I'm free, search for flights from New York to Los Angeles departing that day."
+        },
+        {
+          "role": "user",
+          "content": "Draft an email to my team with the flight options and ask for their preference."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check calendar for a given date, optionally after a certain time.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "after": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "date",
+                "after"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web for a query.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email with recipient, subject, and body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "web_search",
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_17",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is the capital of France?"
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "Paris"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_18",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check if I'm free tomorrow at 10am, then create a reminder for the meeting."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check calendar availability for a given date",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "after": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "due": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "create_reminder"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_19",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Return a JSON object with your name and age."
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "name",
+          "age"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_20",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named factorial that computes the factorial of a non-negative integer. Include test cases for inputs 0, 1, 5."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "factorial",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          }
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_21",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please read the file at /notes/meeting_notes.txt."
+        },
+        {
+          "role": "assistant",
+          "content": "I've read the file."
+        },
+        {
+          "role": "user",
+          "content": "Based on the notes, draft an email to the team summarizing the key points."
+        },
+        {
+          "role": "assistant",
+          "content": "Here's the draft email: ..."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "description": "Read contents of a file",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "read_file",
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_22",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is the capital of France?"
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "Paris"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_23",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check if I'm free tomorrow at 10am, then create a reminder for the meeting."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "check_calendar",
+            "description": "Check calendar availability for a given date",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "after": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "date"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_reminder",
+            "description": "Create a reminder",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "due": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "due"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "check_calendar",
+          "create_reminder"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_24",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Return a JSON object with your name and age."
+        }
+      ],
+      "tools": null,
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "name",
+          "age"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_25",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Write a Python function named factorial that computes the factorial of a non-negative integer. Include test cases for inputs 0, 1, 5."
+        }
+      ],
+      "tools": null,
+      "grader_type": "code_exec",
+      "grader_args": {
+        "function_name": "factorial",
+        "test_cases": [
+          {
+            "args": [
+              0
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              1
+            ],
+            "expected": 1
+          },
+          {
+            "args": [
+              5
+            ],
+            "expected": 120
+          }
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_26",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please read the file at /notes/meeting_notes.txt."
+        },
+        {
+          "role": "assistant",
+          "content": "I've read the file."
+        },
+        {
+          "role": "user",
+          "content": "Based on the notes, draft an email to the team summarizing the key points."
+        },
+        {
+          "role": "assistant",
+          "content": "Here's the draft email: ..."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "description": "Read contents of a file",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "read_file",
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_27",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Hey Hermes, what do I have on my calendar for tomorrow?"
+        },
+        {
+          "role": "user",
+          "content": "I need to move the 2pm team sync to 3pm. Can you do that?"
+        },
+        {
+          "role": "user",
+          "content": "Please confirm the updated schedule for tomorrow."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "schedule",
+          "updated",
+          "confirmed"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_28",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Find the latest news about AI regulation from the past week."
+        },
+        {
+          "role": "user",
+          "content": "Draft an email to my manager summarizing those findings."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web for a query.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "The search query"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email with given to, subject, body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "web_search",
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_29",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Read the file /data/book_info.json and return the title, author, and year fields."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "description": "Read the contents of a file at a given path.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "File path"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "title",
+          "author",
+          "year"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_30",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Hey Hermes, what do I have on my calendar for tomorrow?"
+        },
+        {
+          "role": "user",
+          "content": "I need to move the 2pm team sync to 3pm. Can you do that?"
+        },
+        {
+          "role": "user",
+          "content": "Please confirm the updated schedule for tomorrow."
+        }
+      ],
+      "tools": null,
+      "grader_type": "keyword",
+      "grader_args": {
+        "keywords": [
+          "schedule",
+          "updated",
+          "confirmed"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_31",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Find the latest news about AI regulation from the past week."
+        },
+        {
+          "role": "user",
+          "content": "Draft an email to my manager summarizing those findings."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "web_search",
+            "description": "Search the web for a query.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "The search query"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "draft_email",
+            "description": "Draft an email with given to, subject, body.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "subject",
+                "body"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "tool_sequence",
+      "grader_args": {
+        "tools_in_order": [
+          "web_search",
+          "draft_email"
+        ]
+      }
+    },
+    {
+      "id": "hermes_gen_32",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Read the file /data/book_info.json and return the title, author, and year fields."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "description": "Read the contents of a file at a given path.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "File path"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          }
+        }
+      ],
+      "grader_type": "json_valid",
+      "grader_args": {
+        "required_fields": [
+          "title",
+          "author",
+          "year"
+        ]
+      }
+    }
+  ]
+}

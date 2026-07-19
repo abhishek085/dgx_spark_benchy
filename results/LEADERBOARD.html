@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>dgx_spark_benchy leaderboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    max-width: 1150px; margin: 2rem auto; padding: 0 1rem;
+    background: light-dark(#fafafa, #14161a); color: light-dark(#1a1a1a, #e8e8e8);
+  }
+  h1 { font-size: 1.5rem; margin-bottom: 0.3rem; }
+  .subtitle { color: light-dark(#555, #aaa); font-size: 0.95rem; margin: 0 0 1rem; max-width: 70ch; }
+  .meta { color: light-dark(#888, #777); font-size: 0.8rem; margin-bottom: 1rem; }
+  .legend {
+    background: light-dark(#f0f0f0, #1c1e23); border-radius: 8px; padding: 0.8rem 1.1rem;
+    font-size: 0.82rem; color: light-dark(#444, #bbb); margin-bottom: 1.5rem; line-height: 1.7;
+  }
+  .legend b { color: light-dark(#1a1a1a, #e8e8e8); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+  th, td { text-align: right; padding: 0.55rem 0.7rem; border-bottom: 1px solid light-dark(#ddd, #333); }
+  th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+  th { font-weight: 600; color: light-dark(#444, #bbb); border-bottom: 2px solid light-dark(#ccc, #444);
+       position: sticky; top: 0; background: light-dark(#fafafa, #14161a); }
+  tr:hover { background: light-dark(#f0f0f0, #1f2228); }
+  td.model { font-family: ui-monospace, monospace; font-size: 0.8rem; }
+  .rank1 { font-weight: 700; }
+  .rank1 td.model { color: light-dark(#0a6, #3d8); }
+  .na { color: light-dark(#bbb, #555); }
+  .score { font-variant-numeric: tabular-nums; }
+  table { overflow-x: auto; display: block; }
+  footer { margin-top: 2rem; font-size: 0.8rem; color: light-dark(#888, #777); }
+  footer a { color: inherit; }
+  .byline { color: light-dark(#999, #666); font-size: 0.78rem; margin: -0.5rem 0 1rem; }
+</style>
+</head>
+<body>
+<h1>dgx_spark_benchy leaderboard</h1>
+<p class="byline">by the Nokast community</p>
+<p class="subtitle">Real numbers from actually running each model on one NVIDIA DGX Spark
+(128GB unified memory) — not vendor benchmarks. Every row below sent real requests to a real
+server and measured what happened.</p>
+<p class="meta">generated from results/spark_bench_plus.csv · 14 model(s) benchmarked · sorted by Overall Score</p>
+<div class="legend">
+  <b>Format</b> — how compressed the model is (smaller = less memory, usually a little less accurate).
+  <b>Overall Score</b> — 0-100, how good this model is for a personal-agent use case (Hermes Score if tested that way, otherwise general quality score).
+  <b>Max Document Size</b> — the largest amount of text we could hand it in one go and still get a real answer back.
+  <b>Speed</b> — tokens per second at its best, i.e. how fast the words come out once it starts answering.
+  <b>Max Concurrent Users</b> — how many people/sessions could use it at the same time on this one box before it slowed down or started erroring.
+  <b>Tool Calling</b> — whether it can reliably call functions/tools (needed for anything agentic, like web search or running code).
+</div>
+<table>
+<thead><tr>
+  <th>model</th><th>label</th><th>size</th><th>format</th><th>Overall&nbsp;Score</th>
+  <th>Max&nbsp;Document&nbsp;Size</th><th>Speed&nbsp;(tok/s)</th><th>Max&nbsp;Concurrent&nbsp;Users</th>
+  <th>Tool&nbsp;Calling</th><th>last tested</th>
+</tr></thead>
+<tbody>
+<tr class="rank1"><td class="model">nvidia/Gemma-4-26B-A4B-NVFP4</td><td>nvidia-gemma-4-26b-a4b-nvfp4</td><td>26B</td><td>NVFP4 (4-bit)</td><td><span class="score">75.2</span></td><td>16K tokens</td><td><span class="score">30</span></td><td>2</td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">nvidia/Qwen3.6-35B-A3B-NVFP4</td><td>nvidia-qwen36-35b-a3b-nvfp4</td><td>35B</td><td>NVFP4 (4-bit)</td><td><span class="score">69.0</span></td><td>15K tokens</td><td><span class="score">62</span></td><td>2</td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">nvidia/Qwen3.6-27B-NVFP4</td><td>nvidia-qwen36-27b-nvfp4</td><td>27B</td><td>NVFP4 (4-bit)</td><td><span class="score">66.7</span></td><td>—</td><td><span class="na">—</span></td><td>32</td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">unsloth/gemma-4-31B-it-NVFP4</td><td>unsloth-gemma-4-31b-it-nvfp4</td><td>31B</td><td>NVFP4 (4-bit)</td><td><span class="score">53.3</span></td><td>—</td><td><span class="na">—</span></td><td>4</td><td>❌</td><td>2026-07-18</td></tr>
+<tr><td class="model">unsloth/gemma-4-26B-A4B-it-NVFP4</td><td>unsloth-gemma-4-26b-a4b-it-nvfp4</td><td>26B</td><td>NVFP4 (4-bit)</td><td><span class="score">53.3</span></td><td>—</td><td><span class="na">—</span></td><td>4</td><td>❌</td><td>2026-07-18</td></tr>
+<tr><td class="model">google/gemma-4-31B-it</td><td>google-gemma-4-31b-it</td><td>31B</td><td>BF16 (full size)</td><td><span class="score">53.3</span></td><td>—</td><td><span class="na">—</span></td><td>4</td><td>❌</td><td>2026-07-18</td></tr>
+<tr><td class="model">nvidia/Gemma-4-31B-IT-NVFP4</td><td>nvidia-gemma-4-31b-it-nvfp4</td><td>31B</td><td>NVFP4 (4-bit)</td><td><span class="score">48.0</span></td><td>—</td><td><span class="na">—</span></td><td>2</td><td>❌</td><td>2026-07-18</td></tr>
+<tr><td class="model">nvidia/Qwen3.6-27B-NVFP4</td><td>qwen27b-nvidia-nvfp4</td><td>27B</td><td>NVFP4 (4-bit)</td><td><span class="score">46.8</span></td><td>—</td><td><span class="na">—</span></td><td>128</td><td>✅</td><td>2026-07-17</td></tr>
+<tr><td class="model">unsloth/Qwen3.6-27B-NVFP4</td><td>unsloth-qwen36-27b-nvfp4</td><td>27B</td><td>NVFP4 (4-bit)</td><td><span class="score">44.5</span></td><td>—</td><td><span class="na">—</span></td><td><span class="na">—</span></td><td>✅</td><td>2026-07-18</td></tr>
+<tr><td class="model">unsloth/Qwen3.6-35B-A3B-NVFP4</td><td>unsloth-qwen36-35b-a3b-nvfp4</td><td>35B</td><td>NVFP4 (4-bit)</td><td><span class="score">31.2</span></td><td>—</td><td><span class="na">—</span></td><td>8</td><td>✅</td><td>2026-07-18</td></tr>
+<tr><td class="model">nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4</td><td>nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4</td><td>30B</td><td>NVFP4 (4-bit)</td><td><span class="score">29.0</span></td><td>66K tokens</td><td><span class="score">61</span></td><td>4</td><td>❌</td><td>2026-07-19</td></tr>
+<tr><td class="model">deepreinforce-ai/Ornith-1.0-35B</td><td>deepreinforce-ai-ornith-10-35b</td><td>35B</td><td>BF16 (full size)</td><td><span class="score">29.0</span></td><td>15K tokens</td><td><span class="score">30</span></td><td>4</td><td>❌</td><td>2026-07-19</td></tr>
+<tr><td class="model">unsloth/Qwen3.6-27B-NVFP4</td><td>qwen27b-unsloth-nvfp4</td><td>27B</td><td>NVFP4 (4-bit)</td><td><span class="score">28.3</span></td><td>—</td><td><span class="na">—</span></td><td>4</td><td>✅</td><td>2026-07-17</td></tr>
+<tr><td class="model">Qwen/Qwen3.6-27B</td><td>qwen-qwen36-27b</td><td>27B</td><td>BF16 (full size)</td><td><span class="score">22.9</span></td><td>—</td><td><span class="na">—</span></td><td>4</td><td>✅</td><td>2026-07-18</td></tr>
+</tbody>
+</table>
+<footer>See the <a href="MODEL_WIKI.md">Model Wiki</a> for which models are officially recommended
+for DGX Spark / GB10 and what each one is actually good at, and the repo README for methodology.</footer>
+</body>
+</html>

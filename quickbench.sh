@@ -4,7 +4,7 @@
 # unsloth/NVFP4 quant, someone else's trimmed model, or anything you want a
 # quick read on before committing to a full eval.
 #
-# Runs tier3 (sanity) + a 1-repeat eval (all 10 domains) + a single-gpu_util
+# Runs checks (sanity) + a 1-repeat eval (all 10 domains) + a single-gpu_util
 # capacity pass (orchestrator / coding_agent / chat_agent), then refreshes
 # results/LEADERBOARD.md.
 #
@@ -40,8 +40,8 @@ GPU_UTIL="${4:-0.85}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$HERE"
 
-echo "=== [1/3] tier3 sanity (coding / tool-call / long-context) — $LABEL ==="
-./spark_bench_plus.py tier3 --label "$LABEL" --model "$MODEL" --endpoint "$ENDPOINT"
+echo "=== [1/3] checks (coding / tool-call / long-context) — $LABEL ==="
+./spark_bench_plus.py checks --label "$LABEL" --model "$MODEL" --endpoint "$ENDPOINT"
 
 echo "=== [2/3] eval (1 repeat, full 10-domain suite) — $LABEL ==="
 ./spark_bench_plus.py eval --label "$LABEL" --model "$MODEL" --endpoint "$ENDPOINT" --repeats 1
@@ -52,7 +52,8 @@ echo "=== [3/3] capacity (gpu_util=$GPU_UTIL, orchestrator/coding_agent/chat_age
   --profiles orchestrator,coding_agent,chat_agent \
   --concurrency 1,2,4,8,16
 
-echo "=== refreshing leaderboard ==="
+echo "=== refreshing leaderboard + model wiki ==="
 ./leaderboard.py --write
+./model_wiki.py --write
 
-echo "[quickbench] done — see results/LEADERBOARD.md"
+echo "[quickbench] done — see results/LEADERBOARD.md / results/LEADERBOARD.html"
