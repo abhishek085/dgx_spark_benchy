@@ -19,7 +19,8 @@ Open an issue on [the repo](https://github.com/abhishek085/dgx_spark_benchy/issu
 - **LocalScore / Hermes Score:** 61.7 / 69.0
 - **Biggest document it handled:** 124K tokens
 - **Best-case speed:** 59 tokens/sec
-- **Max concurrent sessions sustained:** 2
+- **Max concurrent requests tested:** 32
+- **Hermes-shaped traffic (tool chains, web search, long-context recall) tested up to:** 256 concurrent sessions
 - **Tool calling:** works
 
 ### unsloth/Qwen3.6-35B-A3B-NVFP4
@@ -30,7 +31,8 @@ Open an issue on [the repo](https://github.com/abhishek085/dgx_spark_benchy/issu
 - **LocalScore / Hermes Score:** 60.4 / 69.0
 - **Biggest document it handled:** 124K tokens
 - **Best-case speed:** 58 tokens/sec
-- **Max concurrent sessions sustained:** 2
+- **Max concurrent requests tested:** 32
+- **Hermes-shaped traffic (tool chains, web search, long-context recall) tested up to:** 256 concurrent sessions
 - **Load time:** 202s
 - **Under load:** peak 96% GPU utilization, 74°C, 78W
 - **Tool calling:** works
@@ -43,7 +45,8 @@ Open an issue on [the repo](https://github.com/abhishek085/dgx_spark_benchy/issu
 - **LocalScore / Hermes Score:** 61.3 / 71.7
 - **Biggest document it handled:** 64K tokens
 - **Best-case speed:** 7 tokens/sec
-- **Max concurrent sessions sustained:** —
+- **Max concurrent requests tested:** 32
+- **Hermes-shaped traffic (tool chains, web search, long-context recall) tested up to:** 256 concurrent sessions
 - **Load time:** 715s
 - **Under load:** peak 96% GPU utilization, 77°C, 79W
 - **Tool calling:** works
@@ -56,7 +59,8 @@ Open an issue on [the repo](https://github.com/abhishek085/dgx_spark_benchy/issu
 - **LocalScore / Hermes Score:** 64.7 / 29.0
 - **Biggest document it handled:** 133K tokens
 - **Best-case speed:** 61 tokens/sec
-- **Max concurrent sessions sustained:** 4
+- **Max concurrent requests tested:** 32
+- **Hermes-shaped traffic (tool chains, web search, long-context recall) tested up to:** 1 concurrent sessions
 - **Load time:** 262s
 - **Under load:** peak 96% GPU utilization, 81°C, 88W
 - **Tool calling:** does not work reliably
@@ -69,7 +73,8 @@ Open an issue on [the repo](https://github.com/abhishek085/dgx_spark_benchy/issu
 - **LocalScore / Hermes Score:** 47.6 / 68.9
 - **Biggest document it handled:** 124K tokens
 - **Best-case speed:** 10 tokens/sec
-- **Max concurrent sessions sustained:** 256
+- **Max concurrent requests tested:** 32
+- **Hermes-shaped traffic (tool chains, web search, long-context recall) tested up to:** 256 concurrent sessions
 - **Load time:** 272s
 - **Under load:** peak 96% GPU utilization, 82°C, 91W
 - **Tool calling:** works
@@ -83,7 +88,8 @@ Open an issue on [the repo](https://github.com/abhishek085/dgx_spark_benchy/issu
 - **LocalScore / Hermes Score:** 73.9 / 75.2
 - **Biggest document it handled:** 129K tokens
 - **Best-case speed:** 30 tokens/sec
-- **Max concurrent sessions sustained:** 2
+- **Max concurrent requests tested:** 32
+- **Hermes-shaped traffic (tool chains, web search, long-context recall) tested up to:** 256 concurrent sessions
 - **Load time:** 342s
 - **Under load:** peak 96% GPU utilization, 74°C, 64W
 - **Tool calling:** works

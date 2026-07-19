@@ -75,6 +75,10 @@ rank modestly below, or vice versa.</p>
 </table>
 
 <h2>Full leaderboard</h2>
+<p class="section-note">"Max Concurrent Users" is the peak number of simultaneous
+orchestrator/coding/chat requests this model was tested against (same 1→32 sweep for every
+model). See "How many people can use it at once" below for the per-traffic-type breakdown, and
+the Hermes section for that workload's own (much wider-ranged) capacity sweep.</p>
 <table>
 <thead><tr>
   <th>model</th><th>label</th><th>status</th><th>size</th><th>format</th>
@@ -83,12 +87,12 @@ rank modestly below, or vice versa.</p>
   <th>Tool&nbsp;Calling</th><th>last tested</th>
 </tr></thead>
 <tbody>
-<tr class="rank1"><td class="model">nvidia/Gemma-4-26B-A4B-NVFP4</td><td>nvidia-gemma-4-26b-a4b-nvfp4</td><td><span class="status-complete">complete</span></td><td>26B</td><td>NVFP4 (4-bit)</td><td><span class="score">73.9</span></td><td><span class="score">75.2</span></td><td>129K tokens</td><td><span class="score">30</span></td><td>2</td><td>✅</td><td>2026-07-19</td></tr>
-<tr><td class="model">nvidia/Gemma-4-31B-IT-NVFP4</td><td>nvidia-gemma-4-31b-it-nvfp4</td><td><span class="status-complete">complete</span></td><td>31B</td><td>NVFP4 (4-bit)</td><td><span class="score">61.3</span></td><td><span class="score">71.7</span></td><td>64K tokens</td><td><span class="score">7</span></td><td><span class="na">—</span></td><td>✅</td><td>2026-07-19</td></tr>
-<tr><td class="model">unsloth/Qwen3.6-35B-A3B-NVFP4</td><td>unsloth-qwen36-35b-a3b-nvfp4</td><td><span class="status-complete">complete</span></td><td>35B</td><td>NVFP4 (4-bit)</td><td><span class="score">60.4</span></td><td><span class="score">69.0</span></td><td>124K tokens</td><td><span class="score">58</span></td><td>2</td><td>✅</td><td>2026-07-19</td></tr>
-<tr><td class="model">nvidia/Qwen3.6-35B-A3B-NVFP4</td><td>nvidia-qwen36-35b-a3b-nvfp4</td><td><span class="status-complete">complete</span></td><td>35B</td><td>NVFP4 (4-bit)</td><td><span class="score">61.7</span></td><td><span class="score">69.0</span></td><td>124K tokens</td><td><span class="score">59</span></td><td>2</td><td>✅</td><td>2026-07-19</td></tr>
-<tr><td class="model">nvidia/Qwen3.6-27B-NVFP4</td><td>nvidia-qwen36-27b-nvfp4</td><td><span class="status-complete">complete</span></td><td>27B</td><td>NVFP4 (4-bit)</td><td><span class="score">47.6</span></td><td><span class="score">68.9</span></td><td>124K tokens</td><td><span class="score">10</span></td><td>256</td><td>✅</td><td>2026-07-19</td></tr>
-<tr><td class="model">nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4</td><td>nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4</td><td><span class="status-complete">complete</span></td><td>30B</td><td>NVFP4 (4-bit)</td><td><span class="score">64.7</span></td><td><span class="score">29.0</span></td><td>133K tokens</td><td><span class="score">61</span></td><td>4</td><td>❌</td><td>2026-07-19</td></tr>
+<tr class="rank1"><td class="model">nvidia/Gemma-4-26B-A4B-NVFP4</td><td>nvidia-gemma-4-26b-a4b-nvfp4</td><td><span class="status-complete">complete</span></td><td>26B</td><td>NVFP4 (4-bit)</td><td><span class="score">73.9</span></td><td><span class="score">75.2</span></td><td>129K tokens</td><td><span class="score">30</span></td><td>32</td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">nvidia/Gemma-4-31B-IT-NVFP4</td><td>nvidia-gemma-4-31b-it-nvfp4</td><td><span class="status-complete">complete</span></td><td>31B</td><td>NVFP4 (4-bit)</td><td><span class="score">61.3</span></td><td><span class="score">71.7</span></td><td>64K tokens</td><td><span class="score">7</span></td><td>32</td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">unsloth/Qwen3.6-35B-A3B-NVFP4</td><td>unsloth-qwen36-35b-a3b-nvfp4</td><td><span class="status-complete">complete</span></td><td>35B</td><td>NVFP4 (4-bit)</td><td><span class="score">60.4</span></td><td><span class="score">69.0</span></td><td>124K tokens</td><td><span class="score">58</span></td><td>32</td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">nvidia/Qwen3.6-35B-A3B-NVFP4</td><td>nvidia-qwen36-35b-a3b-nvfp4</td><td><span class="status-complete">complete</span></td><td>35B</td><td>NVFP4 (4-bit)</td><td><span class="score">61.7</span></td><td><span class="score">69.0</span></td><td>124K tokens</td><td><span class="score">59</span></td><td>32</td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">nvidia/Qwen3.6-27B-NVFP4</td><td>nvidia-qwen36-27b-nvfp4</td><td><span class="status-complete">complete</span></td><td>27B</td><td>NVFP4 (4-bit)</td><td><span class="score">47.6</span></td><td><span class="score">68.9</span></td><td>124K tokens</td><td><span class="score">10</span></td><td>32</td><td>✅</td><td>2026-07-19</td></tr>
+<tr><td class="model">nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4</td><td>nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4</td><td><span class="status-complete">complete</span></td><td>30B</td><td>NVFP4 (4-bit)</td><td><span class="score">64.7</span></td><td><span class="score">29.0</span></td><td>133K tokens</td><td><span class="score">61</span></td><td>32</td><td>❌</td><td>2026-07-19</td></tr>
 </tbody>
 </table>
 

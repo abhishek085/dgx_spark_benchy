@@ -91,13 +91,17 @@ def build_entries(rows):
             vals = [v for v in vals if v is not None]
             e[k] = vals[-1] if vals else None
 
+        # Peak concurrency actually tested per profile -- straight off the capacity_ceiling row's
+        # own `concurrency` column, which spark_bench_plus.py already sets to "how far this sweep
+        # got" (the break point if it broke, otherwise the last level in the list) before we ever
+        # touch it. No extra derivation: just the largest number of parallel requests this profile
+        # was actually pushed to during testing.
         ceilings = {}
         for r in rs:
-            # capacity_ceiling rows come from both the `capacity` command (cmd="capacity") and
-            # the `hermes` command (cmd="hermes", profile_or_workload="hermes") — capture both.
             if r["cmd"] in ("capacity", "hermes") and r["metric"] == "capacity_ceiling":
-                val = _num(r["value"])
-                ceilings[r["profile_or_workload"]] = int(val) if val and val > 0 else None
+                c = _num(r["concurrency"])
+                if c is not None and c > 0:
+                    ceilings[r["profile_or_workload"]] = int(c)
         e["ceilings"] = ceilings
 
         passes = {}
@@ -156,8 +160,13 @@ def build_entries(rows):
             vals = [v for v in vals if v is not None]
             e[metric] = vals[-1] if vals else None
 
-        max_concurrent = [v for v in e["ceilings"].values() if v]
-        e["max_concurrent"] = max(max_concurrent) if max_concurrent else None
+        # Headline "how many concurrent users" number: the peak concurrency tested, from the
+        # `capacity` command's three profiles (orchestrator/coding_agent/chat_agent) only --
+        # they all share the same fixed 1..32 sweep, so they're directly comparable to each
+        # other. `hermes` uses its own much wider auto-escalating range (up to 256) and is
+        # reported separately, in the Hermes Score section.
+        capacity_ceilings = [v for p, v in e["ceilings"].items() if p in ("orchestrator", "coding_agent", "chat_agent")]
+        e["max_concurrent"] = max(capacity_ceilings) if capacity_ceilings else None
 
         for k in ("quality", "capacity_norm", "responsiveness_norm", "hermes_score"):
             vals = [_num(r["value"]) for r in rs
@@ -235,11 +244,11 @@ def render_overall(entries):
 def render_orchestrator(entries):
     lines = [
         "## How many people can use it at once\n",
-        "*Each \"ceiling\" is the largest number of simultaneous conversations this box sustained "
-        "on that kind of traffic before answers got measurably worse or slower — the real answer "
-        "to \"how many users can share this model.\" `orchestrator` is multi-step tool-chain "
-        "traffic (the shape an autonomous agent sends), `coding_agent` is code-generation "
-        "requests, `chat_agent` is casual back-and-forth conversation.*\n",
+        "*The peak number of simultaneous requests of that traffic type this box was actually "
+        "tested against — `orchestrator` is multi-step tool-chain traffic (the shape an "
+        "autonomous agent sends), `coding_agent` is code-generation requests, `chat_agent` is "
+        "casual back-and-forth conversation. All three are swept over the same concurrency "
+        "levels (1, 2, 4, 8, 16, 32), so the numbers are directly comparable to each other.*\n",
         "| model | label | tool-chain agents | coding agents | chat sessions | tool-calling works? |",
         "|---|---|---:|---:|---:|:---:|",
     ]
@@ -440,6 +449,10 @@ rank modestly below, or vice versa.</p>
 </table>
 
 <h2>Full leaderboard</h2>
+<p class="section-note">"Max Concurrent Users" is the peak number of simultaneous
+orchestrator/coding/chat requests this model was tested against (same 1→32 sweep for every
+model). See "How many people can use it at once" below for the per-traffic-type breakdown, and
+the Hermes section for that workload's own (much wider-ranged) capacity sweep.</p>
 <table>
 <thead><tr>
   <th>model</th><th>label</th><th>status</th><th>size</th><th>format</th>
@@ -539,6 +552,7 @@ def render_html(entries, csv_name):
         tc = e["tier3_pass"].get("tool_call")
         tc_s = "✅" if tc == 1.0 else ("❌" if tc == 0.0 else '<span class="na">—</span>')
         max_users = e.get("max_concurrent")
+        max_users_s = str(max_users) if max_users else '<span class="na">—</span>'
         status_s = (f'<span class="status-complete">complete</span>' if e["status"] == "complete"
                     else '<span class="status-partial">partial</span>')
         rows.append(
@@ -552,7 +566,7 @@ def render_html(entries, csv_name):
             f"<td>{_hfmt(e['hermes_hermes_score'])}</td>"
             f"<td>{html.escape(_fmt_context(e.get('max_context_ok')))}</td>"
             f"<td>{_hfmt(e['peak_decode_tps'], 0)}</td>"
-            f"<td>{max_users if max_users else '<span class=\"na\">—</span>'}</td>"
+            f"<td>{max_users_s}</td>"
             f"<td>{tc_s}</td>"
             f"<td>{html.escape(e['timestamp'][:10])}</td>"
             f"</tr>"

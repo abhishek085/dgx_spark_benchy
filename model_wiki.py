@@ -216,7 +216,11 @@ def render(entries):
         lines.append(f"- **Biggest document it handled:** {lb._fmt_context(e.get('max_context_ok'))}")
         lines.append(f"- **Best-case speed:** {lb.fmt(e.get('peak_decode_tps'), 0)} tokens/sec" if e.get('peak_decode_tps') else "- **Best-case speed:** not yet measured")
         max_conc = e.get("max_concurrent")
-        lines.append(f"- **Max concurrent sessions sustained:** {max_conc if max_conc else '—'}")
+        lines.append(f"- **Max concurrent requests tested:** {max_conc if max_conc else '—'}")
+        hermes_conc = e.get("ceilings", {}).get("hermes")
+        if hermes_conc:
+            lines.append(f"- **Hermes-shaped traffic (tool chains, web search, long-context recall) "
+                         f"tested up to:** {hermes_conc} concurrent sessions")
         if e.get("load_time_s") is not None:
             lines.append(f"- **Load time:** {e['load_time_s']:.0f}s")
         if e.get("peak_temp_c") is not None:

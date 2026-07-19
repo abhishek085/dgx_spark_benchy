@@ -29,16 +29,16 @@ _generated from `results/spark_bench_plus.csv`, 6 labeled run(s)_
 
 ## How many people can use it at once
 
-*Each "ceiling" is the largest number of simultaneous conversations this box sustained on that kind of traffic before answers got measurably worse or slower — the real answer to "how many users can share this model." `orchestrator` is multi-step tool-chain traffic (the shape an autonomous agent sends), `coding_agent` is code-generation requests, `chat_agent` is casual back-and-forth conversation.*
+*The peak number of simultaneous requests of that traffic type this box was actually tested against — `orchestrator` is multi-step tool-chain traffic (the shape an autonomous agent sends), `coding_agent` is code-generation requests, `chat_agent` is casual back-and-forth conversation. All three are swept over the same concurrency levels (1, 2, 4, 8, 16, 32), so the numbers are directly comparable to each other.*
 
 | model | label | tool-chain agents | coding agents | chat sessions | tool-calling works? |
 |---|---|---:|---:|---:|:---:|
-| nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4 | nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4 | 1 | 4 | — | ❌ |
-| nvidia/Qwen3.6-35B-A3B-NVFP4 | nvidia-qwen36-35b-a3b-nvfp4 | — | 2 | — | ✅ |
-| unsloth/Qwen3.6-35B-A3B-NVFP4 | unsloth-qwen36-35b-a3b-nvfp4 | — | 2 | — | ✅ |
-| nvidia/Qwen3.6-27B-NVFP4 | nvidia-qwen36-27b-nvfp4 | — | — | — | ✅ |
-| nvidia/Gemma-4-31B-IT-NVFP4 | nvidia-gemma-4-31b-it-nvfp4 | — | — | — | ✅ |
-| nvidia/Gemma-4-26B-A4B-NVFP4 | nvidia-gemma-4-26b-a4b-nvfp4 | — | 2 | — | ✅ |
+| nvidia/Qwen3.6-35B-A3B-NVFP4 | nvidia-qwen36-35b-a3b-nvfp4 | 32 | 2 | 32 | ✅ |
+| unsloth/Qwen3.6-35B-A3B-NVFP4 | unsloth-qwen36-35b-a3b-nvfp4 | 32 | 2 | 32 | ✅ |
+| nvidia/Qwen3.6-27B-NVFP4 | nvidia-qwen36-27b-nvfp4 | 32 | 32 | 32 | ✅ |
+| nvidia/Gemma-4-31B-IT-NVFP4 | nvidia-gemma-4-31b-it-nvfp4 | 32 | 32 | 32 | ✅ |
+| nvidia/Gemma-4-26B-A4B-NVFP4 | nvidia-gemma-4-26b-a4b-nvfp4 | 32 | 2 | 32 | ✅ |
+| nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4 | nvidia-nvidia-nemotron-3-nano-30b-a3b-nvfp4 | 1 | 4 | 32 | ❌ |
 
 ## Hermes Benchmark — best model for a personal-agent harness
 
